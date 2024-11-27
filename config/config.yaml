@@ -1,0 +1,17 @@
+debug: true
+contextTimeout: 5
+
+server:
+    port: ':9900'
+
+database:
+    driver: 'mysql'
+    host: 'localhost'
+    port: 3306
+    username: 'root'
+    password: 'root.123456'
+    name: 'rgpi'
+
+nsq:
+    host: 'nsqd'
+    port: 4150

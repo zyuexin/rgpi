@@ -1,0 +1,29 @@
+/*
+Font families defined by this CSS:
+  - InterVariable  variable font for modern web browsers
+  - Inter          static fonts for older web browsers (small optical size)
+  - InterDisplay   static fonts for older web browsers (large optical size)
+
+Usage example:
+  :root { font-family: Inter, sans-serif; }
+  @supports (font-variation-settings: normal) {
+    :root { font-family: InterVariable, sans-serif; }
+  }
+
+*/
+/* <link rel="stylesheet" href="https://rsms.me/inter/inter.css" /> */
+/* legacy name "Inter var" (Oct 2023) */
+/* @font-face {
+    font-family: 'Inter var';
+    font-style: normal;
+    font-display: swap;
+    src: url('../font/sf-pro-text_semibold.woff2') format('woff2');
+} */
+
+@font-face {
+    font-family: 'Inter var';
+    font-style: normal;
+    font-weight: 600;
+    src: url('../font/PingFangSC-Medium.woff2') format('woff2');
+    /* src: url('../font/InterVariable.woff2') format('woff2'); */
+}

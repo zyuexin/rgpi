@@ -21,6 +21,7 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw?
+**/node_modules/**
 
 rm_file/
 /server/log/
@@ -33,3 +34,5 @@ server/uploads/
 *.iml
 web/.pnpm-debug.log
 web/pnpm-lock.yaml
+
+*.history
