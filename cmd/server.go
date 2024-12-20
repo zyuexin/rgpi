@@ -1,17 +1,26 @@
 package cmd
 
 import (
+	"rgpiserver/internal/router"
+	zlog "rgpiserver/pkg/logger"
+	"rgpiserver/pkg/mysql"
+	"rgpiserver/pkg/redis"
+
 	"github.com/spf13/cobra"
 )
 
 var (
-	httpCmd = &cobra.Command{
-		Use:   "http",
-		Short: "start HTTP REST API server",
-		Run:   initHTTP,
+	serverCmd = &cobra.Command{
+		Use:   "server",
+		Short: "Start REST API Server",
+		Run:   initServer,
 	}
 )
 
-func initHTTP(cmd *cobra.Command, args []string) {
-
+func initServer(cmd *cobra.Command, args []string) {
+	zlog.InitZapLogger()
+	mysql.Connect()
+	redis.Connect()
+	router.Init()
+	zlog.Logger.Info("Server started")
 }

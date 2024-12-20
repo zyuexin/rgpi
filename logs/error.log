@@ -1,0 +1,4 @@
+2024-12-19 22:18:19	[31mERROR[0m	D:/goserver/rgpi/pkg/utils/utils.go:49	gomail: could not send email 1: gomail: invalid address "": mail: no address
+2024-12-19 22:19:31	[31mERROR[0m	D:/goserver/rgpi/pkg/utils/utils.go:49	gomail: could not send email 1: gomail: invalid address "": mail: no address
+2024-12-19 22:33:23	[31mERROR[0m	D:/goserver/rgpi/pkg/utils/utils.go:49	gomail: could not send email 1: gomail: invalid address "1231231": mail: missing '@' or angle-addr
+2024-12-20 01:11:30	[31mERROR[0m	D:/goserver/rgpi/pkg/middlewares/error.go:16	invalid WriteHeader code 1

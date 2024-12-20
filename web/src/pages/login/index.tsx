@@ -27,7 +27,7 @@ export default function AuthenticationPage() {
                 </div>
                 <div className='relative z-20'>
                     <blockquote className='space-y-2'>
-                        <p className='text-lg'>&ldquo;Live for tody. Tommorrows never come&rdquo;</p>
+                        <p className='text-lg'>&ldquo;Live for today. Tommorrows never come&rdquo;</p>
                         <footer className='text-sm'>zinc</footer>
                     </blockquote>
                 </div>

@@ -36,3 +36,4 @@ web/.pnpm-debug.log
 web/pnpm-lock.yaml
 
 *.history
+**/tmp/**

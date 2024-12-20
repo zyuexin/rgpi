@@ -14,7 +14,7 @@ function unknownReactRouterLoader() {
 
 export default [
     {
-        path: 'auth',
+        path: 'user',
         element: Auth,
         loader: unknownReactRouterLoader,
         children: [

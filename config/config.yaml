@@ -11,7 +11,40 @@ database:
     username: 'root'
     password: 'root.123456'
     name: 'rgpi'
-
-nsq:
-    host: 'nsqd'
-    port: 4150
+    charset: 'utf8'
+    base: 'rgpi'
+redis:
+    port: 6379
+    host: 'localhost'
+    username: ''
+    password: ''
+    db: 0
+cors:
+    allowOrigins:
+        - '*'
+    allowMethods:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        - OPTIONS
+    allowHeaders:
+        - Origin
+        - Authorization
+        - Content-Type
+        - Accept
+    exposeHeaders:
+        - Content-Length
+    AllowCredentials: true
+jwt:
+    secret: 'WXlqEk8BJXmAjtp'
+    expires: 604800
+    ignores:
+        - '/user/login'
+        - '/user/register'
+        - '/user/captcha'
+email:
+    from: 'z.yuexin@foxmail.com'
+    password: 'yklpieacwbttjfif'
+    smtp: 'smtp.qq.com'
+    port: 465

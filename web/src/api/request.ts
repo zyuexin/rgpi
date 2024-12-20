@@ -4,9 +4,16 @@ import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse 
 
 type Result<T> = {
     code: number;
+    status: 'Success' | 'Fail' | 'Warning';
     message: string;
-    result: T;
+    data: T;
 };
+
+enum ResponseCode {
+    FailCode,
+    SuccessCode,
+    WarningCode
+}
 
 // 导出Request类，可以用来自定义传递配置来创建实例
 export class Request {
@@ -22,10 +29,10 @@ export class Request {
         this.instance.interceptors.request.use(
             (config) => {
                 // 一般会请求拦截里面加token，用于后端的验证
-                const token = localStorage.getItem('token') as string;
-                if (token) {
-                    config.headers!.Authorization = token;
-                }
+                // const token = localStorage.getItem('token') as string;
+                // if (token) {
+                //     config.headers!.Authorization = token;
+                // }
 
                 return config;
             },
@@ -37,9 +44,14 @@ export class Request {
 
         this.instance.interceptors.response.use(
             (res: AxiosResponse) => {
-                // 直接返回res，当然你也可以只返回res.data
-                // 系统如果有自定义code也可以在这里处理
-                return res;
+                if (res?.data.code === ResponseCode.FailCode) {
+                    res?.data.message && this.alertError(res.data.status, res.data.message);
+                } else if (res?.data.code === ResponseCode.SuccessCode) {
+                    res?.data?.message && this.alertSuccess(res.data.status, res.data.message);
+                } else if (res?.data.code === ResponseCode.WarningCode) {
+                    res?.data.message && this.alertWarning(res.data.status, res.data.message);
+                }
+                return res.data;
             },
             (err) => {
                 // 这里用来处理http常见错误，进行全局提示
@@ -82,17 +94,7 @@ export class Request {
                     default:
                         message = `连接出错(${err.response.status})!`;
                 }
-                // 这里错误消息可以使用全局弹框展示出来
-                // 比如element plus 可以使用 ElMessage
-                // ElMessage({
-                //   showClose: true,
-                //   message: `${message}，请检查网络或联系管理员！`,
-                //   type: "error",
-                // });
-
-                toast(message, {
-                    description: err?.toString()
-                });
+                this.alertError(err.response.status, message);
                 // 这里是AxiosError类型，所以一般我们只reject我们需要的响应即可
                 return Promise.reject(err.response);
             }
@@ -100,12 +102,13 @@ export class Request {
     }
 
     // 定义请求方法
-    public request(config: AxiosRequestConfig): Promise<AxiosResponse> {
+    public request<T = any, D = AxiosRequestConfig>(config: AxiosRequestConfig): Promise<AxiosResponse<T, D>> {
         return this.instance.request(config);
     }
 
-    public get<T = any>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<Result<T>>> {
-        return this.instance.get(url, config);
+    public async get<T = any, D = AxiosRequestConfig<T>>(url: string, config?: AxiosRequestConfig) {
+        const res = await this.instance.get<Result<T>, AxiosResponse<T>, D>(url, config);
+        return res?.data;
     }
 
     public post<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse<Result<T>>> {
@@ -118,6 +121,26 @@ export class Request {
 
     public delete<T = any>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<Result<T>>> {
         return this.instance.delete(url, config);
+    }
+
+    private alertError(status: string, errorMsg?: string) {
+        toast.error(status, {
+            description: errorMsg || 'Unknown Error',
+            duration: 3000
+        });
+    }
+    private alertSuccess(status: string, successMsg?: string) {
+        toast.success(status, {
+            description: successMsg || 'Request Success',
+            position: 'top-right',
+            duration: 2000
+        });
+    }
+    private alertWarning(status: string, warningMsg: string) {
+        toast.warning(status, {
+            description: warningMsg || 'Request Warning',
+            duration: 3000
+        });
     }
 }
 

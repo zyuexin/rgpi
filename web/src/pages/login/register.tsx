@@ -49,16 +49,18 @@ function Register() {
                             name='captcha'
                             control={control}
                             render={({ field }) => (
-                                <InputOTP {...field} maxLength={6} pattern={REGEXP_ONLY_DIGITS}>
-                                    <InputOTPGroup>
-                                        {new Array(6).fill(0).map((_, index) => (
-                                            <InputOTPSlot index={index} />
-                                        ))}
-                                    </InputOTPGroup>
+                                <div className='grid grid-cols-[auto_1fr] gap-2'>
+                                    <InputOTP {...field} maxLength={6} pattern={REGEXP_ONLY_DIGITS}>
+                                        <InputOTPGroup>
+                                            {new Array(6).fill(0).map((_, index) => (
+                                                <InputOTPSlot key={index} index={index} />
+                                            ))}
+                                        </InputOTPGroup>
+                                    </InputOTP>
                                     <Button variant='outline' disabled={isLoading} loading={isLoading}>
-                                        <span className=''>Get Captcha</span>
+                                        Get Captcha
                                     </Button>
-                                </InputOTP>
+                                </div>
                             )}
                         />
                     </div>
@@ -78,7 +80,7 @@ function Register() {
             <div className='others flex justify-around items-center'>
                 {[QQSVG, WechatSVG, SinaSVG].map((src) => {
                     return (
-                        <Button variant='outline' type='button' size='icon' disabled>
+                        <Button key={src} variant='outline' type='button' size='icon' disabled>
                             <img src={src} alt='' />
                         </Button>
                     );
