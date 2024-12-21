@@ -1,22 +1,34 @@
 import { lazy } from 'react';
-import App from '@/App';
-import type { RouteObject } from 'react-router-dom';
-import lazyLoad from './lazy';
+import { type RouteObject, type LoaderFunction } from 'react-router-dom';
+import LazyLoad from './lazy';
+import CookieUtil from '@/utils/cookie';
 
-const Auth = lazyLoad(lazy(() => import('@/pages/login')));
-const Register = lazyLoad(lazy(() => import('@/pages/login/register')));
-const Login = lazyLoad(lazy(() => import('@/pages/login/login')));
+const Auth = LazyLoad(
+    lazy(() => import('@/pages/login')),
+    true
+);
+const Register = LazyLoad(
+    lazy(() => import('@/pages/login/register')),
+    true
+);
+const Login = LazyLoad(
+    lazy(() => import('@/pages/login/login')),
+    true
+);
 
-function unknownReactRouterLoader() {
-    console.log('arguments', arguments);
-    return null;
-}
+const App = LazyLoad(lazy(() => import('@/App')));
+
+const rootLoader: LoaderFunction = (): boolean => {
+    if (!CookieUtil.get(CookieUtil.TOKEN_NAME)) {
+        return false;
+    }
+    return true;
+};
 
 export default [
     {
         path: 'user',
         element: Auth,
-        loader: unknownReactRouterLoader,
         children: [
             {
                 index: true,
@@ -31,8 +43,9 @@ export default [
     },
     {
         path: '/',
-        Component: App,
-        loader: unknownReactRouterLoader,
+        element: App,
+        id: 'root',
+        loader: rootLoader,
         children: []
     }
 ] as RouteObject[];

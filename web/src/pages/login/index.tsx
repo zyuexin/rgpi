@@ -9,6 +9,7 @@ export const metadata: any = {
 };
 
 export default function AuthenticationPage() {
+    console.log('aaa', 123);
     return (
         <div className='container relative hidden h-full flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0'>
             <Link

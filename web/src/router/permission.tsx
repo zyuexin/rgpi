@@ -1,21 +1,17 @@
 import { FC, PropsWithChildren } from 'react';
 import { useRouteLoaderData } from 'react-router-dom';
-// import type { UserInfo } from '../../routers';
-
-interface Iprops {
-    code?: string;
-}
+import Page403 from './page403';
 
 /** @todo 权限路由怎么弄 */
-const Permission: FC<PropsWithChildren<Iprops>> = (props) => {
+const Permission: FC<PropsWithChildren<{ ignorePermission?: boolean }>> = (props) => {
     // 这个root是我们在前面路由中定义了 id: 'root'
-    // const loaderData = useRouteLoaderData('root') as UserInfo;
-    const loaderData: any = useRouteLoaderData('root');
-    const { children, code } = props;
-    if (!code || loaderData?.permissionRoutes?.includes(code)) {
-        return <>{children}</>;
+    const hasToken = useRouteLoaderData('root');
+    const { children } = props;
+    console.log('props.ignorePermission', props.ignorePermission);
+    if (props.ignorePermission || hasToken) {
+        return children;
     }
-    return <div>403...</div>;
+    return <Page403 />;
 };
 
 export default Permission;

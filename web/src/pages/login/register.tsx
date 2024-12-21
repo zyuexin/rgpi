@@ -41,9 +41,7 @@ function Register() {
                             name='nickname'
                             control={control}
                             rules={{ required: true }}
-                            render={({ field }) => (
-                                <Input {...field} placeholder='nickname' autoCapitalize='none' autoComplete='email' autoCorrect='off' />
-                            )}
+                            render={({ field }) => <Input {...field} placeholder='nickname' autoCapitalize='none' autoCorrect='off' />}
                         />
                         <Controller
                             name='captcha'
