@@ -2,6 +2,7 @@ import { lazy } from 'react';
 import { type RouteObject, type LoaderFunction } from 'react-router-dom';
 import LazyLoad from './lazy';
 import CookieUtil from '@/utils/cookie';
+import Page404 from './page404';
 
 const Auth = LazyLoad(
     lazy(() => import('@/pages/login')),
@@ -47,5 +48,9 @@ export default [
         id: 'root',
         loader: rootLoader,
         children: []
+    },
+    {
+        path: '*',
+        element: <Page404 />
     }
 ] as RouteObject[];

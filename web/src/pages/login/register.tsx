@@ -1,23 +1,27 @@
-import React, { useState } from 'react';
-import { cn } from '@/utils/utils';
-import { Button, Input, InputWithAddon, InputOTP, InputOTPGroup, InputOTPSlot } from '@/components';
+import { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { EMAIL_SUFFIX } from '@/utils/constants';
 import { REGEXP_ONLY_DIGITS } from 'input-otp';
+import { cn } from '@/utils/utils';
+import { Button, Input, InputWithAddon, InputOTP, InputOTPGroup, InputOTPSlot } from '@/components';
 import QQSVG from '/svg/qq.svg';
 import WechatSVG from '/svg/wechat.svg';
 import SinaSVG from '/svg/sina.svg';
+import { useUserStore, RegisterInfo } from '@/store';
 
 function Register() {
-    const { control, handleSubmit } = useForm();
-    const [isLoading, setIsLoading] = React.useState<boolean>(false);
+    const { control, handleSubmit, getValues, watch } = useForm<RegisterInfo>();
     const [emailSuffix, setEMailSuffix] = useState<string>(EMAIL_SUFFIX[0]);
+    const { captcha, register, registerLoading, sendCaptcha } = useUserStore();
 
     return (
         <div className={cn('grid gap-6')}>
             <form
                 onSubmit={handleSubmit((data) => {
-                    console.log('data', data);
+                    register({
+                        ...data,
+                        email: `${data.email}${emailSuffix}`
+                    });
                 })}
             >
                 <div className='grid gap-2'>
@@ -30,7 +34,6 @@ function Register() {
                                 <InputWithAddon
                                     {...field}
                                     placeholder='email'
-                                    disabled={isLoading}
                                     afterSelections={EMAIL_SUFFIX}
                                     afterValue={emailSuffix}
                                     afterAddonOnChange={setEMailSuffix}
@@ -41,29 +44,44 @@ function Register() {
                             name='nickname'
                             control={control}
                             rules={{ required: true }}
-                            render={({ field }) => <Input {...field} placeholder='nickname' autoCapitalize='none' autoCorrect='off' />}
+                            render={({ field }) => <Input {...field} placeholder='nickname' />}
                         />
                         <Controller
-                            name='captcha'
+                            name='password'
                             control={control}
-                            render={({ field }) => (
-                                <div className='grid grid-cols-[auto_1fr] gap-2'>
-                                    <InputOTP {...field} maxLength={6} pattern={REGEXP_ONLY_DIGITS}>
-                                        <InputOTPGroup>
-                                            {new Array(6).fill(0).map((_, index) => (
-                                                <InputOTPSlot key={index} index={index} />
-                                            ))}
-                                        </InputOTPGroup>
-                                    </InputOTP>
-                                    <Button variant='outline' disabled={isLoading} loading={isLoading}>
-                                        Get Captcha
-                                    </Button>
-                                </div>
-                            )}
+                            rules={{ required: true }}
+                            render={({ field }) => <Input type='password' {...field} placeholder='password' />}
                         />
+                        {watch('email') && (
+                            <Controller
+                                name='captcha'
+                                control={control}
+                                rules={{ required: true }}
+                                render={({ field }) => (
+                                    <div className='grid grid-cols-[auto_120px] gap-2'>
+                                        <InputOTP {...field} maxLength={6} pattern={REGEXP_ONLY_DIGITS}>
+                                            <InputOTPGroup>
+                                                {new Array(6).fill(0).map((_, index) => (
+                                                    <InputOTPSlot key={index} index={index} />
+                                                ))}
+                                            </InputOTPGroup>
+                                        </InputOTP>
+                                        <Button
+                                            loading={captcha.loading}
+                                            disabled={captcha.countdown! > 0}
+                                            onClick={() => void sendCaptcha(getValues('email'))}
+                                            variant='outline'
+                                            type='button'
+                                        >
+                                            {captcha.countdown! > 0 ? <span className='ml-2'>Retry({captcha.countdown})s</span> : 'Get Captcha'}
+                                        </Button>
+                                    </div>
+                                )}
+                            />
+                        )}
                     </div>
-                    <Button disabled={isLoading} loading={isLoading}>
-                        Sign In with Email
+                    <Button type='submit' loading={registerLoading}>
+                        Sign up with Email
                     </Button>
                 </div>
             </form>

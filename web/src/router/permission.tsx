@@ -7,7 +7,6 @@ const Permission: FC<PropsWithChildren<{ ignorePermission?: boolean }>> = (props
     // 这个root是我们在前面路由中定义了 id: 'root'
     const hasToken = useRouteLoaderData('root');
     const { children } = props;
-    console.log('props.ignorePermission', props.ignorePermission);
     if (props.ignorePermission || hasToken) {
         return children;
     }

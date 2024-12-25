@@ -1,0 +1,41 @@
+# 国际化错误提示信息
+server_error:
+    zh_CN: 服务器错误
+    en_US: Internal Server Error
+    zh_TW: 服務器錯誤
+invalid_params:
+    zh_CN: 参数错误
+    en_US: Invalid Parameters
+    zh_TW: 參數錯誤
+user_exits:
+    zh_CN: 用户已存在
+    en_US: User Exists
+    zh_TW: 用戶已存在
+user_not_found:
+    zh_CN: 用户不存在
+    en_US: User Not Found
+    zh_TW: 用戶不存在
+email_invalid:
+    zh_CN: 邮箱格式错误
+    en_US: Invalid Email
+    zh_TW: 郵箱格式錯誤
+email_is_registered:
+    zh_CN: 邮箱已注册
+    en_US: Email is registered
+    zh_TW: 郵箱已註冊
+email_is_required:
+    zh_CN: 邮箱不能为空
+    en_US: Email is required
+    zh_TW: 郵箱不能爲空
+captcha_is_not_correct:
+    zh_CN: 验证码错误
+    en_US: Captcha is not correct
+    zh_TW: 驗證碼錯誤
+captcha_is_expired:
+    zh_CN: 验证码已过期
+    en_US: Captcha is expired
+    zh_TW: 驗證碼已過期
+captcha_has_been_sent:
+    zh_CN: 验证码重复发送，稍后再试
+    en_US: Send the captch repeatedly. Try again later
+    zh_TW: 驗證碼重複發送，稍後再試

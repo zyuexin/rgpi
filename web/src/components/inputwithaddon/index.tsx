@@ -17,7 +17,7 @@ export type InputWithAddonProps = InputProps & {
 const InputWithAddon = React.forwardRef<HTMLInputElement, InputWithAddonProps>(
     ({ className, type, afterAddonOnChange, afterValue, afterSelections, addonClassNames, ...props }, ref) => {
         return (
-            <div className='flex h-10 w-full rounded-md gap-4'>
+            <div className='h-10 w-full grid grid-cols-[auto_120px] gap-2'>
                 {/* {props?.beforeSelections && (
                     <Select>
                         <SelectTrigger className='w-[180px]'>
@@ -27,7 +27,7 @@ const InputWithAddon = React.forwardRef<HTMLInputElement, InputWithAddonProps>(
                 )} */}
                 <Input type={type} ref={ref} {...props} className='flex-1' />
                 <Select onValueChange={afterAddonOnChange} value={afterValue}>
-                    <SelectTrigger className={cn('w-[115px]', addonClassNames)}>
+                    <SelectTrigger className={cn('min-w-[115px]', addonClassNames)}>
                         <SelectValue placeholder='select...' />
                     </SelectTrigger>
                     <SelectContent>

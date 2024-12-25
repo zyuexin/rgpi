@@ -4,6 +4,7 @@ import (
 	"crypto/tls"
 	"fmt"
 	"math/rand"
+	"regexp"
 	"strconv"
 
 	"github.com/spf13/viper"
@@ -23,10 +24,12 @@ func Contains(str string, slice []string) bool {
 	return false
 }
 
+// GetVerificationCode 获取验证码
 func GetVerificationCode_len6() string {
 	return strconv.Itoa(rand.Intn(900000) + 100000)
 }
 
+// SendCaptchaMail 发送验证码
 func SendCaptchaMail(to string, captcha string) error {
 
 	subject := "Rgpi注册验证码"
@@ -51,4 +54,11 @@ func SendCaptchaMail(to string, captcha string) error {
 	}
 	zlog.Logger.Info("验证码已发送!!")
 	return nil
+}
+
+// IsValidEmail 判断是否是邮箱格式
+func IsValidEmail(email string) bool {
+	var emailRegex = `^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$`
+	re := regexp.MustCompile(emailRegex)
+	return re.MatchString(email)
 }

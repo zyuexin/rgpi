@@ -2,27 +2,17 @@ package controllers
 
 import (
 	"net/http"
-	"rgpiserver/internal/services"
 	"time"
 
-	"rgpiserver/pkg/response"
-
 	"github.com/gin-gonic/gin"
-)
 
-const (
-	SendCaptchaSuccessMessage   = "Send captcha success!"
-	EmailParamIsRequiredMessage = "Email param is required!"
+	"rgpiserver/internal/models"
+	"rgpiserver/internal/services"
+	"rgpiserver/pkg/response"
 )
 
 type UserController struct {
 	Svr *services.UserService
-}
-
-// 用户请求验证码时返回的验证码信息
-type UserCaptchaResponse struct {
-	SendAt     int64         `json:"sendAt"`
-	Expiration time.Duration `json:"expiration"`
 }
 
 func NewUserController(userService *services.UserService) *UserController {
@@ -39,38 +29,36 @@ func NewUserController(userService *services.UserService) *UserController {
 // @Param   user body models.User true "Create user"
 // @Success 200 {object} response.Response
 // @Router /user/captcha [get]
-func (uc *UserController) SendCaptcha(c *gin.Context) {
+func (uc *UserController) SendCaptchaHandler(c *gin.Context) {
 	email := c.Query("email")
 	// 验证邮箱是否为空
 	if email == "" {
-		response.Error(c, http.StatusBadRequest, http.StatusBadRequest, EmailParamIsRequiredMessage)
-		return
-	}
-	// 验证是否发送过验证码
-	ttl, err := uc.Svr.GetEmailCaptchaExpiration(c, email)
-	if err != nil {
-		response.Error(c, http.StatusBadRequest, http.StatusBadRequest, err.Error())
-		return
-	}
-	// 判断发送过的验证码是否在有效期内
-	if ttl > 0 {
-		response.Error(c, http.StatusBadRequest, http.StatusBadRequest, ttl)
+		response.Error(c, http.StatusBadRequest, response.FailCode, "email_is_required")
 		return
 	}
 	// 发送验证码
 	expiration, err := uc.Svr.SendCaptcha(c, email)
 	if err != nil {
-		response.Error(c, http.StatusBadRequest, http.StatusBadRequest, err.Error())
+		response.Error(c, http.StatusBadRequest, response.FailCode, err.Error())
 		return
 	}
-	response.Success(c, response.SuccessCode, UserCaptchaResponse{
+	response.Success(c, response.SuccessCode, models.ResponseParamsOfSendCaptcha{
 		SendAt:     time.Now().Unix(),
 		Expiration: expiration,
-	}, SendCaptchaSuccessMessage)
+	}, "send_captcha_success")
 }
 
 func (uc *UserController) RegisterHandler(c *gin.Context) {
-
+	var params models.RequestParamsOfRegister
+	if err := c.ShouldBindJSON(&params); err != nil {
+		response.Error(c, http.StatusBadRequest, response.FailCode, "invalid_params")
+		return
+	}
+	if err := uc.Svr.Register(c, params); err != nil {
+		response.Error(c, http.StatusBadRequest, response.FailCode, err.Error())
+	} else {
+		response.Success(c, response.SuccessCode, nil, "注册成功")
+	}
 }
 
 func (uc *UserController) LoginHandler(c *gin.Context) {

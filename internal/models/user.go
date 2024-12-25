@@ -1,5 +1,18 @@
 package models
 
+// 用户请求验证码时返回的验证码信息
+type ResponseParamsOfSendCaptcha struct {
+	SendAt     int64 `json:"sendAt"`
+	Expiration int   `json:"expiration"`
+}
+
+type RequestParamsOfRegister struct {
+	Email    string `json:"email" binding:"required"`
+	Password string `json:"password" binding:"required"`
+	Captcha  string `json:"captcha" binding:"required"`
+	Nickname string `json:"nickName" binding:"required"`
+}
+
 type User struct {
 	ID        int    `json:"id" gorm:"primary_key"`
 	Username  string `json:"username"`

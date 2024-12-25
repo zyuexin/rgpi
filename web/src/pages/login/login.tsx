@@ -1,33 +1,36 @@
 import React from 'react';
 import { cn } from '@/utils/utils';
+import { useForm, Controller } from 'react-hook-form';
 import { Button } from '@/components/button';
 import { Input } from '@/components/input';
-import { Label } from '@/components/label';
 
 function Login() {
+    const { control, handleSubmit } = useForm();
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
-
-    async function onSubmit(event: React.SyntheticEvent) {}
 
     return (
         <div className={cn('grid gap-6')}>
-            <form onSubmit={onSubmit}>
+            <form
+                onSubmit={handleSubmit((data) => {
+                    console.log('data', data);
+                })}
+            >
                 <div className='grid gap-2'>
                     <div className='grid gap-1'>
-                        <Label className='sr-only' htmlFor='email'>
-                            Email
-                        </Label>
-                        <Input
-                            id='email'
-                            placeholder='name@example.com'
-                            type='email'
-                            autoCapitalize='none'
-                            autoComplete='email'
-                            autoCorrect='off'
-                            disabled={isLoading}
+                        <Controller
+                            name='email'
+                            control={control}
+                            rules={{ required: true }}
+                            render={({ field }) => <Input {...field} placeholder='email' />}
+                        />
+                        <Controller
+                            name='password'
+                            control={control}
+                            rules={{ required: true }}
+                            render={({ field }) => <Input {...field} placeholder='password' />}
                         />
                     </div>
-                    <Button disabled={isLoading} loading={isLoading}>
+                    <Button type='submit' disabled={isLoading} loading={isLoading}>
                         Sign In with Email
                     </Button>
                 </div>

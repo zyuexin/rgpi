@@ -111,16 +111,19 @@ export class Request {
         return res?.data;
     }
 
-    public post<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse<Result<T>>> {
-        return this.instance.post(url, data, config);
+    public async post<T = any, D = AxiosRequestConfig>(url: string, data?: any, config?: AxiosRequestConfig) {
+        const res = await this.instance.post<Result<T>, AxiosResponse<T>, D>(url, data, config);
+        return res?.data;
     }
 
-    public put<T = any>(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse<Result<T>>> {
-        return this.instance.put(url, data, config);
+    public async put<T = any, D = AxiosRequestConfig>(url: string, data?: any, config?: AxiosRequestConfig) {
+        const res = await this.instance.put<Result<T>, AxiosResponse<T>, D>(url, data, config);
+        return res?.data;
     }
 
-    public delete<T = any>(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse<Result<T>>> {
-        return this.instance.delete(url, config);
+    public async delete<T = any, D = AxiosRequestConfig>(url: string, config?: AxiosRequestConfig) {
+        const res = await this.instance.delete<Result<T>, AxiosResponse<T>, D>(url, config);
+        return res?.data;
     }
 
     private alertError(status: string, errorMsg?: string) {

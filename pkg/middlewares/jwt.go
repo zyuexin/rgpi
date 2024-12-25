@@ -25,6 +25,8 @@ type CustomClaims struct {
 	UserID   string `json:"userid"`
 	Email    string `json:"email"`
 	Nickname string `json:"nickname"`
+	Theme    string `json:"theme"`
+	Lang     string `json:"lang"`
 	jwt.RegisteredClaims
 }
 
@@ -40,6 +42,8 @@ func NewDfalutClaims(id, email, nickname string, expires time.Duration) CustomCl
 		UserID:   id,
 		Email:    email,
 		Nickname: nickname,
+		Lang:     "zh-CN",
+		Theme:    "system",
 		RegisteredClaims: jwt.RegisteredClaims{
 			NotBefore: beforeTime,
 			ExpiresAt: expiresTime,
@@ -118,6 +122,9 @@ func JwtHandler() gin.HandlerFunc {
 			ctx.JSON(http.StatusUnauthorized, gin.H{"code": http.StatusUnauthorized, "message": "Not Authorized"})
 			return
 		}
+
+		// 将 claims 存储在 gin.Context 中，以便后续使用
+		ctx.Set("claims", claims)
 
 		ctx.Next()
 	}

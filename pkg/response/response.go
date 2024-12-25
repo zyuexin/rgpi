@@ -2,7 +2,6 @@ package response
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/gin-gonic/gin"
 )
@@ -31,13 +30,11 @@ type Response struct {
 
 // SuccessResponse 成功响应（http状态码为200时使用）
 func Success(c *gin.Context, code int, data interface{}, message string) {
-	if message == "" {
-		message = "success"
-	}
+	lang, _ := c.Cookie("lang")
 	res := Response{
 		HttpCode: 200,
 		Code:     code,
-		Message:  message,
+		Message:  GetMessage(message, lang, SUCCESS_INTL),
 		Status:   codeStatusTextMap[code],
 		Data:     data,
 	}
@@ -45,19 +42,13 @@ func Success(c *gin.Context, code int, data interface{}, message string) {
 }
 
 // ErrorResponse 错误响应 （http状态码不是200时使用）
-func Error(c *gin.Context, httpCode, code int, message any) {
-	switch message.(type) {
-	case int:
-		message = fmt.Sprintf("%d", message)
-	case float64:
-	case float32:
-		message = fmt.Sprintf("%f", message)
-	}
+func Error(c *gin.Context, httpCode, code int, message string) {
+	lang, _ := c.Cookie("lang")
 	res := Response{
 		HttpCode: httpCode,
 		Code:     code,
 		Status:   codeStatusTextMap[code],
-		Message:  message.(string),
+		Message:  GetMessage(message, lang, ERROR_INTL),
 	}
 	c.JSON(code, res)
 }

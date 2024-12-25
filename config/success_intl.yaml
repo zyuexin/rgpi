@@ -1,0 +1,10 @@
+# 国际化成功提示信息
+
+send_captcha_success:
+    zh_CN: 验证码已发送至您的邮箱，请注意查收。
+    en_US: Your verification code has been sent to your mobile phone, please check it.
+    zh_TW: 您的驗證碼已發送到您的，請注意查收。
+register_success:
+    zh_CN: 注册成功，请登录
+    en_US: Registered successfully, please log in
+    zh_TW: 註冊成功，請登入
