@@ -14,18 +14,16 @@ type RequestParamsOfRegister struct {
 }
 
 type User struct {
-	ID        int    `json:"id" gorm:"primary_key"`
-	Username  string `json:"username"`
+	Email     string `json:"email" gorm:"primary_key"`
+	Nickname  string `json:"nickname"`
 	Password  string `json:"password"`
-	Phone     string `json:"phone"`
-	Email     string `json:"email"`
-	LastLogin string `json:"last_login"`
+	LastLogin int64  `json:"last_login"`
 	Avatar    string `json:"avatar"`
 	Theme     string `json:"theme"`
 	Lang      string `json:"lang"`
-	CreatedAt string `json:"created_at"`
-	UpdatedAt string `json:"updated_at"`
-	DeletedAt string `json:"deleted_at"`
+	CreatedAt int64  `json:"created_at"`
+	UpdatedAt int64  `json:"updated_at"`
+	DeletedAt int64  `json:"deleted_at"`
 }
 
 type UserResponse struct {

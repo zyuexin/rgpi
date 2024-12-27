@@ -15,13 +15,11 @@ export type UserInfo = {
 
 export type CaptchInfo = {
     sendAt: number;
-    expired: Expired;
+    expiration: Expired;
 };
 
 export type CaptchState = CaptchInfo & {
     loading: boolean;
-    sendAt: number;
-    expired: Expired;
     countdown?: number;
     countdownInterval?: number;
 };

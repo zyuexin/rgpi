@@ -2,8 +2,8 @@ package config
 
 import (
 	"fmt"
-
 	"github.com/spf13/viper"
+	"strings"
 )
 
 var (
@@ -17,10 +17,12 @@ var (
 	successIntlConfigFile = "config/success_intl.yaml"
 )
 
-type Intl map[string]map[string]string
+type Intl map[string]map[string]any
 
 func (i Intl) Get(key, lang string) (s string, ok bool) {
-	s, ok = i[key][lang]
+	key = strings.ToLower(key)
+	lang = strings.ToLower(lang)
+	s, ok = i[key][lang].(string)
 	return
 }
 
@@ -55,12 +57,13 @@ func initIntlConfig(configType, configFile string) (Intl, error) {
 	if err := intlViper.ReadInConfig(); err != nil {
 		return nil, err
 	}
-	allKeys := intlViper.AllKeys()
-	intlMap := make(Intl, len(allKeys))
+	allSettings := intlViper.AllSettings()
+	intlMap := make(Intl, len(allSettings))
 
-	for _, key := range allKeys {
-		if m, ok := intlViper.Get(key).(map[string]string); ok {
-			intlMap[key] = m
+	for key, val := range allSettings {
+		v, ok := val.(map[string]interface{})
+		if ok {
+			intlMap[key] = v
 		}
 	}
 	return intlMap, nil

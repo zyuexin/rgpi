@@ -69,7 +69,7 @@ function Register() {
                                         <Button
                                             loading={captcha.loading}
                                             disabled={captcha.countdown! > 0}
-                                            onClick={() => void sendCaptcha(getValues('email'))}
+                                            onClick={() => void sendCaptcha(getValues('email') + emailSuffix)}
                                             variant='outline'
                                             type='button'
                                         >

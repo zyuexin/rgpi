@@ -13,6 +13,8 @@ import (
 type UserRepository interface {
 	GetEmailCaptchaExpiration(ctx *gin.Context, email string) (time.Duration, error)
 	SaveCaptcha(ctx *gin.Context, email, captcha string) (time.Duration, error)
+	IsRegister(ctx *gin.Context, email string) bool
+	ClearCaptcha(ctx *gin.Context, email string) (string, error)
 	Create(user *models.User) error
 	Login() error
 	Update() error
@@ -31,6 +33,7 @@ func NewUserRepository(db *gorm.DB, rdb *redis.Client) *UserRepositoryImpl {
 	}
 }
 
+// 获取验证码过期时间
 func (repo *UserRepositoryImpl) GetEmailCaptchaExpiration(ctx *gin.Context, email string) (time.Duration, error) {
 	// 获取键的过期时间（TTL）
 	ttl, err := repo.RDB.TTL(ctx, email).Result()
@@ -40,6 +43,7 @@ func (repo *UserRepositoryImpl) GetEmailCaptchaExpiration(ctx *gin.Context, emai
 	return ttl, nil
 }
 
+// 保存验证码到Redis，并设置过期时间
 func (repo *UserRepositoryImpl) SaveCaptcha(ctx *gin.Context, email, captcha string) (time.Duration, error) {
 	expiration, ok := viper.Get("captcha.expiration").(time.Duration)
 	if !ok {
@@ -48,7 +52,24 @@ func (repo *UserRepositoryImpl) SaveCaptcha(ctx *gin.Context, email, captcha str
 	return expiration, repo.RDB.Set(ctx, email, captcha, expiration*time.Second).Err()
 }
 
+func (repo *UserRepositoryImpl) ClearCaptcha(ctx *gin.Context, email string) (string, error) {
+	_, err := repo.RDB.Del(ctx, email).Result()
+	return email, err
+}
+
+// 检查邮箱是否已经注册
+func (repo *UserRepositoryImpl) IsRegister(ctx *gin.Context, email string) bool {
+	var user models.User
+	result := repo.DB.First(&user, "email = ?", email)
+	return result.Error != gorm.ErrRecordNotFound
+}
+
 func (repo *UserRepositoryImpl) Create(user *models.User) error {
+	result := repo.DB.Create(user)
+	// 检查是否创建成功
+	if result.Error != nil {
+		return result.Error
+	}
 	return nil
 }
 

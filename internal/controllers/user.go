@@ -55,9 +55,9 @@ func (uc *UserController) RegisterHandler(c *gin.Context) {
 		return
 	}
 	if err := uc.Svr.Register(c, params); err != nil {
-		response.Error(c, http.StatusBadRequest, response.FailCode, err.Error())
+		response.Error(c, http.StatusBadRequest, response.FailCode, "register_fail")
 	} else {
-		response.Success(c, response.SuccessCode, nil, "注册成功")
+		response.Success(c, response.SuccessCode, nil, "register_success")
 	}
 }
 

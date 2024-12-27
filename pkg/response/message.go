@@ -6,9 +6,20 @@ import (
 	"github.com/spf13/viper"
 )
 
+const (
+	FailCode = iota
+	SuccessCode
+	WarningCode
+
+	FailTitleKey    = "fail"
+	SuccessTitleKey = "success"
+	WarningTitleKey = "warning"
+)
+
 var (
 	DEFAULT_LANG = "en_US"
-	UNKNOW       = "unknow error"
+	UNKNOW       = "unknow"
+	INFO         = "Info"
 	ERROR_INTL   = "error_intl"
 	SUCCESS_INTL = "success_intl"
 )
@@ -18,12 +29,34 @@ func GetMessage(code, lang, tp string) string {
 	if lang == "" {
 		lang = DEFAULT_LANG
 	}
-	if ErrorMessages, ok := viper.Get(tp).(config.Intl); ok {
-		msg, ok := ErrorMessages.Get(code, lang)
+	if intl, ok := viper.Get(tp).(config.Intl); ok {
+		msg, ok := intl.Get(code, lang)
 		if ok {
 			return msg
 		}
+		if tp == SUCCESS_INTL {
+			return code
+		}
 		return UNKNOW + ": " + code
 	}
-	return UNKNOW
+	return UNKNOW + ": " + code
+}
+
+func GetStatusText(code int, lang string) string {
+	tp := ERROR_INTL
+	key := FailTitleKey
+	if code == SuccessCode {
+		tp = SUCCESS_INTL
+		key = SuccessTitleKey
+	}
+	if lang == "" {
+		lang = DEFAULT_LANG
+	}
+	if intl, ok := viper.Get(tp).(config.Intl); ok {
+		title, ok := intl.Get(key, lang)
+		if ok {
+			return title
+		}
+	}
+	return INFO
 }

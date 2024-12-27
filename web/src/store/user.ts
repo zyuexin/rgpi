@@ -17,14 +17,14 @@ const INITIAL_APP_STATE: UserState = {
     captcha: {
         loading: false,
         sendAt: 0,
-        expired: 0,
+        expiration: 0,
         countdown: 0,
         countdownInterval: undefined
     }
 };
 
 const useUserStore = create<UserStore>()(
-    immer((set, get) => ({
+    immer((set) => ({
         ...INITIAL_APP_STATE,
         sendCaptcha: async (email) => {
             set((state) => {
@@ -35,19 +35,19 @@ const useUserStore = create<UserStore>()(
                 state.captcha = {
                     ...(res || {}),
                     loading: false,
-                    countdown: res.expired,
-                    countdownInterval: setInterval(() => {
-                        set((s) => {
-                            if ((s.captcha.countdown || 0) > 0) {
-                                s.captcha.countdown! -= 1;
-                            } else {
-                                clearInterval(s.captcha.countdownInterval);
-                                s.captcha.countdownInterval = undefined;
-                                s.captcha.countdown = 0;
-                            }
-                        });
-                    }, 1000)
+                    countdown: res.expiration
                 };
+                state.captcha.countdownInterval = setInterval(() => {
+                    set((s) => {
+                        if ((s.captcha.countdown || 0) > 0) {
+                            s.captcha.countdown! -= 1;
+                        } else {
+                            clearInterval(s.captcha.countdownInterval);
+                            s.captcha.countdownInterval = undefined;
+                            s.captcha.countdown = 0;
+                        }
+                    });
+                }, 1000);
             });
         },
         resetCaptchaCountdown: () => {
@@ -64,6 +64,7 @@ const useUserStore = create<UserStore>()(
         },
         register: async (registerInfo) => {
             const res = await register(registerInfo);
+            console.log('res', res);
         }
     }))
 );

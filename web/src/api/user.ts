@@ -1,10 +1,10 @@
-import { RegisterInfo, Email, CaptchState } from '@/store/types/user';
+import { RegisterInfo, Email, CaptchInfo } from '@/store/types/user';
 import request from './request';
 
 export const sendCaptcha = async (email: Email) => {
-    const defaultResponse = { sendAt: 0, expired: 0 };
+    const defaultResponse = { sendAt: 0, expiration: 0 };
     if (!email) return defaultResponse;
-    const res = await request.get<CaptchState>(`/user/captcha?email=${email}`);
+    const res = await request.get<CaptchInfo>(`/user/captcha?email=${email}`);
     return res || defaultResponse;
 };
 

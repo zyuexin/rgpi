@@ -6,20 +6,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const (
-	FailCode = iota
-	SuccessCode
-	WarningCode
-)
-
-var (
-	codeStatusTextMap = map[int]string{
-		FailCode:    "Fail",
-		SuccessCode: "Success",
-		WarningCode: "Warning",
-	}
-)
-
 type Response struct {
 	HttpCode int         `json:"-"`              // HTTP状态码
 	Code     int         `json:"code"`           // 状态码，非http状态码
@@ -35,7 +21,7 @@ func Success(c *gin.Context, code int, data interface{}, message string) {
 		HttpCode: 200,
 		Code:     code,
 		Message:  GetMessage(message, lang, SUCCESS_INTL),
-		Status:   codeStatusTextMap[code],
+		Status:   GetStatusText(code, lang),
 		Data:     data,
 	}
 	c.JSON(200, res)
@@ -47,7 +33,7 @@ func Error(c *gin.Context, httpCode, code int, message string) {
 	res := Response{
 		HttpCode: httpCode,
 		Code:     code,
-		Status:   codeStatusTextMap[code],
+		Status:   GetStatusText(code, lang),
 		Message:  GetMessage(message, lang, ERROR_INTL),
 	}
 	c.JSON(code, res)

@@ -1,5 +1,8 @@
 # 国际化成功提示信息
-
+success:
+    zh_CN: 成功
+    en_US: Success
+    zh_TW: 成功
 send_captcha_success:
     zh_CN: 验证码已发送至您的邮箱，请注意查收。
     en_US: Your verification code has been sent to your mobile phone, please check it.

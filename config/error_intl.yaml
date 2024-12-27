@@ -1,4 +1,12 @@
 # 国际化错误提示信息
+fail:
+    zh_CN: 失败
+    en_US: Fail
+    zh_TW: 失敗
+warning:
+    zh_CN: 警告
+    en_US: Warning
+    zh_TW: 警告
 server_error:
     zh_CN: 服务器错误
     en_US: Internal Server Error
@@ -39,3 +47,7 @@ captcha_has_been_sent:
     zh_CN: 验证码重复发送，稍后再试
     en_US: Send the captch repeatedly. Try again later
     zh_TW: 驗證碼重複發送，稍後再試
+register_fail:
+    zh_CN: 注册失败
+    en_US: Register Fail
+    zh_TW: 註冊失敗

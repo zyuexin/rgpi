@@ -31,7 +31,6 @@ func Connect() {
 	db, err := gorm.Open(mysql.Dialector{Config: &mysql.Config{DSN: args}}, &gorm.Config{})
 	if err != nil {
 		zlog.Logger.Error(`😫: Connected failed, check your Mysql with ` + args)
-		// panic(`😫: Connected failed, check your Mysql with ` + args)
 	}
 
 	migrateErr := db.AutoMigrate(&models.User{})
@@ -39,8 +38,6 @@ func Connect() {
 	if migrateErr != nil {
 		panic(migrateErr)
 	}
-
-	sql, _ := db.DB()
-	defer sql.Close()
+	DB = db
 	zlog.Logger.Info(`🍟: Successfully connected to Mysql at ` + args)
 }

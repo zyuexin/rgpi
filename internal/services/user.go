@@ -3,6 +3,7 @@ package services
 import (
 	"errors"
 	"math"
+	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -21,11 +22,13 @@ func NewUserService(repo repositories.UserRepository) *UserService {
 	}
 }
 
+// 获取验证码过期时间（秒）
 func (us *UserService) GetEmailCaptchaExpiration(c *gin.Context, email string) (int, error) {
 	ttl, err := us.Repo.GetEmailCaptchaExpiration(c, email)
 	return int(math.Ceil(ttl.Seconds())), err
 }
 
+// 发送验证码邮件
 func (us *UserService) SendCaptcha(c *gin.Context, email string) (int, error) {
 
 	if !utils.IsValidEmail(email) {
@@ -56,6 +59,7 @@ func (us *UserService) SendCaptcha(c *gin.Context, email string) (int, error) {
 	return int(expiration), nil
 }
 
+// 注册用户
 func (us *UserService) Register(c *gin.Context, params models.RequestParamsOfRegister) error {
 	if !utils.IsValidEmail(params.Email) {
 		return errors.New("email_invalid")
@@ -67,6 +71,29 @@ func (us *UserService) Register(c *gin.Context, params models.RequestParamsOfReg
 	}
 	if ttl < 1 {
 		return errors.New("captcha_is_expired")
+	}
+	if us.Repo.IsRegister(c, params.Email) {
+		return errors.New("email_is_registered")
+	}
+
+	user := &models.User{
+		Email:     params.Email,
+		Password:  params.Password,
+		Nickname:  params.Nickname,
+		LastLogin: 0,
+		Avatar:    "",
+		Theme:     "system",
+		Lang:      "en_US",
+		CreatedAt: time.Now().Unix(),
+		UpdatedAt: time.Now().Unix(),
+		DeletedAt: 0,
+	}
+	if err = us.Repo.Create(user); err != nil {
+		return err
+	}
+
+	if _, err = us.Repo.ClearCaptcha(c, params.Email); err != nil {
+		return err
 	}
 	return nil
 }

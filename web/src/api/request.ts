@@ -4,7 +4,8 @@ import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse 
 
 type Result<T> = {
     code: number;
-    status: 'Success' | 'Fail' | 'Warning';
+    // 后端返回，支持国际化，所以这里用的是string类型
+    status: string;
     message: string;
     data: T;
 };
