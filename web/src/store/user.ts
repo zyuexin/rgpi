@@ -1,15 +1,28 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
-import type { UserState, UserStore } from './types/user';
-import { register, sendCaptcha } from '@/api/user';
+import type { UserState, UserStore, LoginInfo } from './types/user';
+import { register, login, sendCaptcha } from '@/api/user';
+import { AxiosResponse } from '@/api/request';
 
 const INITIAL_APP_STATE: UserState = {
     registerLoading: false,
-    user: {
+    registerInfo: {
+        email: '',
+        nickname: '',
+        password: '',
+        captcha: ''
+    },
+    loginLoading: false,
+    loginInfo: {
+        email: '',
+        password: ''
+    },
+    userInfo: {
         id: '',
         name: '',
         email: '',
         avatar: '',
+        lang: 'en_US',
         theme: 'system',
         createdAt: '',
         updatedAt: ''
@@ -62,9 +75,18 @@ const useUserStore = create<UserStore>()(
                 };
             });
         },
-        register: async (registerInfo) => {
-            const res = await register(registerInfo);
-            console.log('res', res);
+        doRegister: async (registerInfo) => {
+            set((state) => (state.loginLoading = true));
+            await register<AxiosResponse<undefined>>(registerInfo);
+            set((state) => (state.registerLoading = false));
+        },
+        doLogin: async (info: LoginInfo) => {
+            set((state) => (state.loginLoading = true));
+            const res = await login(info);
+            set((state) => {
+                state.loginLoading = false;
+                state.userInfo = res || {};
+            });
         }
     }))
 );

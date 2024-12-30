@@ -22,28 +22,22 @@ var (
 )
 
 type CustomClaims struct {
-	UserID   string `json:"userid"`
 	Email    string `json:"email"`
 	Nickname string `json:"nickname"`
-	Theme    string `json:"theme"`
-	Lang     string `json:"lang"`
 	jwt.RegisteredClaims
 }
 
 type Jwt struct {
-	signKey []byte
-	expires int64
+	signKey    []byte
+	expiration int64
 }
 
-func NewDfalutClaims(id, email, nickname string, expires time.Duration) CustomClaims {
+func NewDfalutClaims(id, email, nickname string, expiration time.Duration) CustomClaims {
 	beforeTime := jwt.NewNumericDate(time.Now())
-	expiresTime := jwt.NewNumericDate(beforeTime.Add(expires))
+	expiresTime := jwt.NewNumericDate(beforeTime.Add(expiration))
 	return CustomClaims{
-		UserID:   id,
 		Email:    email,
 		Nickname: nickname,
-		Lang:     "zh-CN",
-		Theme:    "system",
 		RegisteredClaims: jwt.RegisteredClaims{
 			NotBefore: beforeTime,
 			ExpiresAt: expiresTime,
@@ -54,17 +48,18 @@ func NewDfalutClaims(id, email, nickname string, expires time.Duration) CustomCl
 
 func NewJwt() *Jwt {
 	secret := viper.GetString("jwt.secret")
-	expires := viper.GetInt64("jwt.expires")
+	expiration := viper.GetInt64("jwt.expiration")
 	return &Jwt{
-		signKey: []byte(secret),
-		expires: expires,
+		signKey:    []byte(secret),
+		expiration: expiration,
 	}
 }
 
 // CreateToken 创建新的 Token
 func (j *Jwt) CreateToken(claims CustomClaims) (token string, err error) {
 	withClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return withClaims.SignedString(j.signKey)
+	token, err = withClaims.SignedString(j.signKey)
+	return fmt.Sprintf("Bearer %s", token), err
 }
 
 // ParseToken 解析 Token

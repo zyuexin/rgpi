@@ -13,11 +13,10 @@ import (
 type UserRepository interface {
 	GetEmailCaptchaExpiration(ctx *gin.Context, email string) (time.Duration, error)
 	SaveCaptcha(ctx *gin.Context, email, captcha string) (time.Duration, error)
-	IsRegister(ctx *gin.Context, email string) bool
+	IsRegister(ctx *gin.Context, email string) (bool, *models.User)
 	ClearCaptcha(ctx *gin.Context, email string) (string, error)
 	Create(user *models.User) error
-	Login() error
-	Update() error
+	Update(user *models.User) error
 	Logout() error
 }
 
@@ -58,10 +57,10 @@ func (repo *UserRepositoryImpl) ClearCaptcha(ctx *gin.Context, email string) (st
 }
 
 // 检查邮箱是否已经注册
-func (repo *UserRepositoryImpl) IsRegister(ctx *gin.Context, email string) bool {
-	var user models.User
-	result := repo.DB.First(&user, "email = ?", email)
-	return result.Error != gorm.ErrRecordNotFound
+func (repo *UserRepositoryImpl) IsRegister(ctx *gin.Context, email string) (bool, *models.User) {
+	var user *models.User
+	result := repo.DB.First(user, "email = ?", email)
+	return result.Error != gorm.ErrRecordNotFound, user
 }
 
 func (repo *UserRepositoryImpl) Create(user *models.User) error {
@@ -73,11 +72,14 @@ func (repo *UserRepositoryImpl) Create(user *models.User) error {
 	return nil
 }
 
-func (repo *UserRepositoryImpl) Login() error {
-	return nil
-}
-
-func (repo *UserRepositoryImpl) Update() error {
+func (repo *UserRepositoryImpl) Update(user *models.User) error {
+	tx := repo.DB.Model(user).Where("email = ?", user.Email).Update("updated_at", time.Now().Unix())
+	if tx.Error != nil {
+		return tx.Error
+	}
+	if tx.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
 	return nil
 }
 

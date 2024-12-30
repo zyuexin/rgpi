@@ -36,9 +36,11 @@ cors:
     exposeHeaders:
         - Content-Length
     AllowCredentials: true
+captcha:
+    expiration: 180
 jwt:
     secret: 'WXlqEk8BJXmAjtp'
-    expires: 604800
+    expiration: 1296000
     ignores:
         - '/user/login'
         - '/user/register'

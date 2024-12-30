@@ -48,6 +48,14 @@ func (uc *UserController) SendCaptchaHandler(c *gin.Context) {
 	}, "send_captcha_success")
 }
 
+// @Summary 用户注册
+// @Description 用户注册
+// @Tags User
+// @Accept  json
+// @Produce  json
+// @Param   user body models.RequestParamsOfRegister true "Create user"
+// @Success 200 {object} response.Response
+// @Router /user/register [post]
 func (uc *UserController) RegisterHandler(c *gin.Context) {
 	var params models.RequestParamsOfRegister
 	if err := c.ShouldBindJSON(&params); err != nil {
@@ -61,8 +69,27 @@ func (uc *UserController) RegisterHandler(c *gin.Context) {
 	}
 }
 
+// @Summary 用户登录
+// @Description 用户登录
+// @Tags User
+// @Accept  json
+// @Produce  json
+// @Param   user body models.RequestParamsOfLogin true "Create user"
+// @Success 200 {object} response.Response
+// @Router /user/login [post]
 func (uc *UserController) LoginHandler(c *gin.Context) {
-
+	var params models.RequestParamsOfLogin
+	if err := c.ShouldBindJSON(&params); err != nil {
+		response.Error(c, http.StatusBadRequest, response.FailCode, "invalid_params")
+		return
+	}
+	var user *models.User
+	user, err := uc.Svr.Login(c, params)
+	if err != nil {
+		response.Error(c, http.StatusBadRequest, response.FailCode, "register_fail")
+	} else {
+		response.Success(c, response.SuccessCode, user, "register_success")
+	}
 }
 
 func (uc *UserController) UpdateHandler(c *gin.Context) {

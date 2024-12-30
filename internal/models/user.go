@@ -13,11 +13,15 @@ type RequestParamsOfRegister struct {
 	Nickname string `json:"nickName" binding:"required"`
 }
 
+type RequestParamsOfLogin struct {
+	Email    string `json:"email" binding:"required"`
+	Password string `json:"password" binding:"required"`
+}
+
 type User struct {
 	Email     string `json:"email" gorm:"primary_key"`
 	Nickname  string `json:"nickname"`
 	Password  string `json:"password"`
-	LastLogin int64  `json:"last_login"`
 	Avatar    string `json:"avatar"`
 	Theme     string `json:"theme"`
 	Lang      string `json:"lang"`

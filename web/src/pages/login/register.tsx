@@ -10,15 +10,17 @@ import SinaSVG from '/svg/sina.svg';
 import { useUserStore, RegisterInfo } from '@/store';
 
 function Register() {
-    const { control, handleSubmit, getValues, watch } = useForm<RegisterInfo>();
     const [emailSuffix, setEMailSuffix] = useState<string>(EMAIL_SUFFIX[0]);
-    const { captcha, register, registerLoading, sendCaptcha } = useUserStore();
+    const { captcha, doRegister, registerLoading, sendCaptcha, registerInfo } = useUserStore();
+    const { control, handleSubmit, getValues, watch } = useForm<RegisterInfo>({
+        values: registerInfo
+    });
 
     return (
         <div className={cn('grid gap-6')}>
             <form
                 onSubmit={handleSubmit((data) => {
-                    register({
+                    doRegister({
                         ...data,
                         email: `${data.email}${emailSuffix}`
                     });

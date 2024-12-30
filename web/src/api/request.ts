@@ -2,6 +2,12 @@
 import { toast } from 'sonner';
 import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse } from 'axios';
 
+export type { AxiosResponse };
+export interface ReqConf<D = any> extends AxiosRequestConfig<D> {
+    shouldReturnFullResponse?: boolean;
+    shouldToast?: boolean;
+}
+
 type Result<T> = {
     code: number;
     // 后端返回，支持国际化，所以这里用的是string类型
@@ -21,9 +27,9 @@ export class Request {
     // axios 实例
     instance: AxiosInstance;
     // 基础配置，url和超时时间
-    baseConfig: AxiosRequestConfig = { baseURL: '/api', timeout: 60000 };
+    baseConfig: ReqConf = { baseURL: '/api', timeout: 60000 };
 
-    constructor(config: AxiosRequestConfig) {
+    constructor(config: ReqConf) {
         // 使用axios.create创建axios实例
         this.instance = axios.create(Object.assign(this.baseConfig, config));
 
@@ -103,28 +109,28 @@ export class Request {
     }
 
     // 定义请求方法
-    public request<T = any, D = AxiosRequestConfig>(config: AxiosRequestConfig): Promise<AxiosResponse<T, D>> {
+    public request<T = any, D = ReqConf>(config: ReqConf): Promise<AxiosResponse<T, D>> {
         return this.instance.request(config);
     }
 
-    public async get<T = any, D = AxiosRequestConfig<T>>(url: string, config?: AxiosRequestConfig) {
+    public async get<T = any, D = ReqConf<T>>(url: string, config?: ReqConf) {
         const res = await this.instance.get<Result<T>, AxiosResponse<T>, D>(url, config);
-        return res?.data;
+        return config?.shouldReturnFullResponse ? res : res?.data;
     }
 
-    public async post<T = any, D = AxiosRequestConfig>(url: string, data?: any, config?: AxiosRequestConfig) {
+    public async post<T = any, D = ReqConf>(url: string, data?: any, config?: ReqConf) {
         const res = await this.instance.post<Result<T>, AxiosResponse<T>, D>(url, data, config);
-        return res?.data;
+        return config?.shouldReturnFullResponse ? res : res?.data;
     }
 
-    public async put<T = any, D = AxiosRequestConfig>(url: string, data?: any, config?: AxiosRequestConfig) {
+    public async put<T = any, D = ReqConf>(url: string, data?: any, config?: ReqConf) {
         const res = await this.instance.put<Result<T>, AxiosResponse<T>, D>(url, data, config);
-        return res?.data;
+        return config?.shouldReturnFullResponse ? res : res?.data;
     }
 
-    public async delete<T = any, D = AxiosRequestConfig>(url: string, config?: AxiosRequestConfig) {
+    public async delete<T = any, D = ReqConf>(url: string, config?: ReqConf) {
         const res = await this.instance.delete<Result<T>, AxiosResponse<T>, D>(url, config);
-        return res?.data;
+        return config?.shouldReturnFullResponse ? res : res?.data;
     }
 
     private alertError(status: string, errorMsg?: string) {

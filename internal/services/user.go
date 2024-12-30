@@ -6,9 +6,11 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 
 	"rgpiserver/internal/models"
 	"rgpiserver/internal/repositories"
+	"rgpiserver/pkg/middlewares"
 	"rgpiserver/pkg/utils"
 )
 
@@ -72,7 +74,7 @@ func (us *UserService) Register(c *gin.Context, params models.RequestParamsOfReg
 	if ttl < 1 {
 		return errors.New("captcha_is_expired")
 	}
-	if us.Repo.IsRegister(c, params.Email) {
+	if isRegister, _ := us.Repo.IsRegister(c, params.Email); isRegister {
 		return errors.New("email_is_registered")
 	}
 
@@ -80,7 +82,6 @@ func (us *UserService) Register(c *gin.Context, params models.RequestParamsOfReg
 		Email:     params.Email,
 		Password:  params.Password,
 		Nickname:  params.Nickname,
-		LastLogin: 0,
 		Avatar:    "",
 		Theme:     "system",
 		Lang:      "en_US",
@@ -98,8 +99,34 @@ func (us *UserService) Register(c *gin.Context, params models.RequestParamsOfReg
 	return nil
 }
 
-func (us *UserService) Login() {
-
+// 用户登录
+func (us *UserService) Login(c *gin.Context, params models.RequestParamsOfLogin) (*models.User, error) {
+	var user *models.User
+	isRegister, user := us.Repo.IsRegister(c, params.Email)
+	if !isRegister {
+		return nil, errors.New("email_is_not_registered")
+	}
+	if user.Password != params.Password {
+		return nil, errors.New("password_is_wrong")
+	}
+	// 1.生成token
+	jwt := middlewares.NewJwt()
+	token, err := jwt.CreateToken(middlewares.CustomClaims{
+		Email:    user.Email,
+		Nickname: user.Nickname,
+	})
+	if err != nil {
+		return nil, errors.New("token_create_failed")
+	}
+	// 2.更新用户最后登录时间
+	user.UpdatedAt = time.Now().Unix()
+	err = us.Repo.Update(user)
+	// 3.向cookie中写入token
+	if err != nil {
+		c.SetCookie("Authorization", token, viper.GetInt("jwt.expiration"), "/", "", false, false)
+		return nil, err
+	}
+	return user, nil
 }
 
 func (us *UserService) Update(username string, password string) {
