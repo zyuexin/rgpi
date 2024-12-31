@@ -1,27 +1,37 @@
-import { useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useForm, Controller, useWatch } from 'react-hook-form';
 import { EMAIL_SUFFIX } from '@/utils/constants';
 import { cn } from '@/utils/utils';
 import { Button } from '@/components/button';
 import { Input } from '@/components/input';
 import { InputWithAddon } from '@/components';
-import { useUserStore } from '@/store';
+import { LoginInfo, useUserStore } from '@/store';
 
 function Login() {
+    const navigate = useNavigate();
     const [emailSuffix, setEMailSuffix] = useState<string>(EMAIL_SUFFIX[0]);
-    const { loginLoading, loginInfo, doLogin } = useUserStore();
+    const { loginLoading, loginInfo, doLogin, updateLoginInfo } = useUserStore();
     const { control, handleSubmit } = useForm({
         values: loginInfo
     });
+    const watchedField = useWatch({ control });
+
+    useEffect(() => {
+        updateLoginInfo(watchedField as LoginInfo);
+    }, [watchedField]);
 
     return (
         <div className={cn('grid gap-6')}>
             <form
-                onSubmit={handleSubmit((data) => {
-                    doLogin({
+                onSubmit={handleSubmit(async (data) => {
+                    const succescs = await doLogin({
                         ...data,
                         email: `${data.email}${emailSuffix}`
                     });
+                    if (succescs) {
+                        navigate('/', { replace: true });
+                    }
                 })}
             >
                 <div className='grid gap-2'>
@@ -44,7 +54,7 @@ function Login() {
                             name='password'
                             control={control}
                             rules={{ required: true }}
-                            render={({ field }) => <Input {...field} placeholder='password' />}
+                            render={({ field }) => <Input {...field} type='password' placeholder='password' />}
                         />
                     </div>
                     <Button type='submit' disabled={loginLoading} loading={loginLoading}>

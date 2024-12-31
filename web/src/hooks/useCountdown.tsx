@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export function useCountdown(initialTime: number) {
     // 使用 useState Hook 来创建一个时间和一个更新时间的函数
@@ -7,17 +7,19 @@ export function useCountdown(initialTime: number) {
     // 使用 useState Hook 来创建一个状态和一个更新状态的函数
     const [isRunning, setIsRunning] = useState(false);
 
+    const timerRef = useRef<number>();
+
     // 使用 useEffect Hook 来实现倒计时的逻辑
     useEffect(() => {
         // 如果状态为运行并且时间大于零
         if (isRunning && time > 0) {
             // 设置一个定时器，每隔一秒更新一次时间
-            const timerId = setTimeout(() => {
+            timerRef.current = setTimeout(() => {
                 setTime(time - 1);
             }, 1000);
             // 返回一个清理函数，用于取消定时器
             return () => {
-                clearTimeout(timerId);
+                clearTimeout(timerRef.current);
             };
         }
         // 如果状态为停止或者时间等于零
@@ -43,6 +45,10 @@ export function useCountdown(initialTime: number) {
         setIsRunning(false);
     }
 
+    function clear() {
+        clearTimeout(timerRef.current);
+    }
+
     // 返回时间和控制函数
-    return { time, start, pause, reset };
+    return { time, start, pause, reset, clear };
 }

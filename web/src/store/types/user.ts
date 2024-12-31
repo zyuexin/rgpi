@@ -63,10 +63,12 @@ export type UserActions = {
     sendCaptcha: (email: string) => Promise<void>;
     // 重置验证码倒计时
     resetCaptchaCountdown?: () => void;
+    updateRegisterInfo: (info: RegisterInfo) => void;
+    updateLoginInfo: (info: LoginInfo) => void;
     // 注册新用户
     doRegister: (registerInfo: RegisterInfo) => Promise<void>;
     // 用户登录
-    doLogin: (loginInfo: LoginInfo) => Promise<void>;
+    doLogin: (loginInfo: LoginInfo) => Promise<boolean>;
 };
 
 export type UserStore = UserState & UserActions;

@@ -2,8 +2,8 @@
  * Cookie 操作工具类
  */
 class CookieUtil {
-    static TOKEN_NAME = 'token';
-    static USER_NAME = 'username';
+    static TOKEN_NAME = 'Authorization';
+    static USER_NAME = 'Email';
     /**
      * 设置 cookie
      * @param name cookie 名称

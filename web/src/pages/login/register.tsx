@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { useEffect, useState } from 'react';
+import { useForm, Controller, useWatch } from 'react-hook-form';
 import { EMAIL_SUFFIX } from '@/utils/constants';
 import { REGEXP_ONLY_DIGITS } from 'input-otp';
 import { cn } from '@/utils/utils';
@@ -11,10 +11,14 @@ import { useUserStore, RegisterInfo } from '@/store';
 
 function Register() {
     const [emailSuffix, setEMailSuffix] = useState<string>(EMAIL_SUFFIX[0]);
-    const { captcha, doRegister, registerLoading, sendCaptcha, registerInfo } = useUserStore();
+    const { captcha, doRegister, registerLoading, sendCaptcha, registerInfo, updateRegisterInfo } = useUserStore();
     const { control, handleSubmit, getValues, watch } = useForm<RegisterInfo>({
         values: registerInfo
     });
+    const watchedField = useWatch({ control });
+    useEffect(() => {
+        updateRegisterInfo(watchedField as RegisterInfo);
+    }, [watchedField]);
 
     return (
         <div className={cn('grid gap-6')}>

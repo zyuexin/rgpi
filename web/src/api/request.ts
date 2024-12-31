@@ -114,23 +114,39 @@ export class Request {
     }
 
     public async get<T = any, D = ReqConf<T>>(url: string, config?: ReqConf) {
-        const res = await this.instance.get<Result<T>, AxiosResponse<T>, D>(url, config);
-        return config?.shouldReturnFullResponse ? res : res?.data;
+        try {
+            const res = await this.instance.get<Result<T>, AxiosResponse<T>, D>(url, config);
+            return config?.shouldReturnFullResponse ? res : res?.data;
+        } catch (error) {
+            return null;
+        }
     }
 
     public async post<T = any, D = ReqConf>(url: string, data?: any, config?: ReqConf) {
-        const res = await this.instance.post<Result<T>, AxiosResponse<T>, D>(url, data, config);
-        return config?.shouldReturnFullResponse ? res : res?.data;
+        try {
+            const res = await this.instance.post<Result<T>, AxiosResponse<T>, D>(url, data, config);
+            return config?.shouldReturnFullResponse ? res : res?.data;
+        } catch (error) {
+            return null;
+        }
     }
 
     public async put<T = any, D = ReqConf>(url: string, data?: any, config?: ReqConf) {
-        const res = await this.instance.put<Result<T>, AxiosResponse<T>, D>(url, data, config);
-        return config?.shouldReturnFullResponse ? res : res?.data;
+        try {
+            const res = await this.instance.put<Result<T>, AxiosResponse<T>, D>(url, data, config);
+            return config?.shouldReturnFullResponse ? res : res?.data;
+        } catch (error) {
+            return null;
+        }
     }
 
     public async delete<T = any, D = ReqConf>(url: string, config?: ReqConf) {
-        const res = await this.instance.delete<Result<T>, AxiosResponse<T>, D>(url, config);
-        return config?.shouldReturnFullResponse ? res : res?.data;
+        try {
+            const res = await this.instance.delete<Result<T>, AxiosResponse<T>, D>(url, config);
+            return config?.shouldReturnFullResponse ? res : res?.data;
+        } catch (error) {
+            return null;
+        }
     }
 
     private alertError(status: string, errorMsg?: string) {

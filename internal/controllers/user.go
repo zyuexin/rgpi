@@ -86,9 +86,9 @@ func (uc *UserController) LoginHandler(c *gin.Context) {
 	var user *models.User
 	user, err := uc.Svr.Login(c, params)
 	if err != nil {
-		response.Error(c, http.StatusBadRequest, response.FailCode, "register_fail")
+		response.Error(c, http.StatusBadRequest, response.FailCode, err.Error())
 	} else {
-		response.Success(c, response.SuccessCode, user, "register_success")
+		response.Success(c, response.SuccessCode, user, "login_success")
 	}
 }
 

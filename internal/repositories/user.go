@@ -58,9 +58,9 @@ func (repo *UserRepositoryImpl) ClearCaptcha(ctx *gin.Context, email string) (st
 
 // 检查邮箱是否已经注册
 func (repo *UserRepositoryImpl) IsRegister(ctx *gin.Context, email string) (bool, *models.User) {
-	var user *models.User
-	result := repo.DB.First(user, "email = ?", email)
-	return result.Error != gorm.ErrRecordNotFound, user
+	var user models.User
+	result := repo.DB.First(&user, "email = ?", email)
+	return result.Error != gorm.ErrRecordNotFound, &user
 }
 
 func (repo *UserRepositoryImpl) Create(user *models.User) error {

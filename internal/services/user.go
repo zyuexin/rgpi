@@ -122,11 +122,12 @@ func (us *UserService) Login(c *gin.Context, params models.RequestParamsOfLogin)
 	user.UpdatedAt = time.Now().Unix()
 	err = us.Repo.Update(user)
 	// 3.向cookie中写入token
-	if err != nil {
-		c.SetCookie("Authorization", token, viper.GetInt("jwt.expiration"), "/", "", false, false)
-		return nil, err
+	if err == nil {
+		c.SetCookie(middlewares.AUTHORIZATION, token, viper.GetInt("jwt.expiration"), "/", "", false, false)
+		c.SetCookie(middlewares.EMAIL, user.Email, viper.GetInt("jwt.expiration"), "/", "", false, false)
+		return user, err
 	}
-	return user, nil
+	return nil, err
 }
 
 func (us *UserService) Update(username string, password string) {

@@ -11,3 +11,7 @@ register_success:
     zh_CN: 注册成功，请登录
     en_US: Registered successfully, please log in
     zh_TW: 註冊成功，請登入
+login_success:
+    zh_CN: 登录成功
+    en_US: Login success
+    zh_TW: 登入成功

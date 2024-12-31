@@ -14,6 +14,12 @@ import (
 	"github.com/spf13/viper"
 )
 
+const (
+	EMAIL         = "Email"
+	AUTHORIZATION = "Authorization"
+	BEARER        = "Bearer"
+)
+
 var (
 	ErrTokenExpired     = errors.New("token is expired")        // 令牌过期
 	ErrTokenNotValidYet = errors.New("token not active yet")    // 令牌未生效
@@ -59,7 +65,7 @@ func NewJwt() *Jwt {
 func (j *Jwt) CreateToken(claims CustomClaims) (token string, err error) {
 	withClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	token, err = withClaims.SignedString(j.signKey)
-	return fmt.Sprintf("Bearer %s", token), err
+	return fmt.Sprintf("%s %s", BEARER, token), err
 }
 
 // ParseToken 解析 Token
@@ -94,15 +100,15 @@ func JwtHandler() gin.HandlerFunc {
 			return
 		}
 
-		tokenStr := ctx.GetHeader("Authorization")
+		tokenStr := ctx.GetHeader(AUTHORIZATION)
 		if tokenStr == "" {
 			ctx.Abort()
 			ctx.JSON(http.StatusUnauthorized, gin.H{"code": http.StatusUnauthorized, "message": "Not Authorized"})
 			return
 		}
-		parts := strings.Split(tokenStr, " ")
+		parts := strings.Split(tokenStr, "+")
 
-		if len(parts) != 2 || parts[0] != "Bearer" {
+		if len(parts) != 2 || parts[0] != BEARER {
 			ctx.Abort()
 			ctx.JSON(http.StatusUnauthorized, gin.H{"code": http.StatusUnauthorized, "message": "Not Authorized"})
 			return
