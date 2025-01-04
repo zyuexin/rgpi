@@ -15,3 +15,7 @@ login_success:
     zh_CN: 登录成功
     en_US: Login success
     zh_TW: 登入成功
+menu_query_success:
+    zh_CN: 菜单查询成功
+    en_US: Menu query success
+    zh_TW: 菜單查詢成功

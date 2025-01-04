@@ -51,12 +51,14 @@ export class Request {
 
         this.instance.interceptors.response.use(
             (res: AxiosResponse) => {
-                if (res?.data.code === ResponseCode.FailCode) {
-                    res?.data.message && this.alertError(res.data.status, res.data.message);
-                } else if (res?.data.code === ResponseCode.SuccessCode) {
-                    res?.data?.message && this.alertSuccess(res.data.status, res.data.message);
-                } else if (res?.data.code === ResponseCode.WarningCode) {
-                    res?.data.message && this.alertWarning(res.data.status, res.data.message);
+                if ((res.config as ReqConf)?.shouldToast !== false) {
+                    if (res?.data.code === ResponseCode.FailCode) {
+                        res?.data.message && this.alertError(res.data.status, res.data.message);
+                    } else if (res?.data.code === ResponseCode.SuccessCode) {
+                        res?.data?.message && this.alertSuccess(res.data.status, res.data.message);
+                    } else if (res?.data.code === ResponseCode.WarningCode) {
+                        res?.data.message && this.alertWarning(res.data.status, res.data.message);
+                    }
                 }
                 return res.data;
             },

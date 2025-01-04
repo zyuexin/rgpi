@@ -5,7 +5,7 @@ import { register, login, sendCaptcha } from '@/api/user';
 import { AxiosResponse } from '@/api/request';
 import Cookie from '@/utils/cookie';
 
-const INITIAL_APP_STATE: UserState = {
+const INITIAL_USER_STATE: UserState = {
     registerLoading: false,
     registerInfo: {
         email: '',
@@ -39,7 +39,7 @@ const INITIAL_APP_STATE: UserState = {
 
 const useUserStore = create<UserStore>()(
     immer((set) => ({
-        ...INITIAL_APP_STATE,
+        ...INITIAL_USER_STATE,
         sendCaptcha: async (email) => {
             set((state) => {
                 state.captcha.loading = true;

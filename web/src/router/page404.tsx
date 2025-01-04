@@ -18,7 +18,7 @@ export default () => {
                 <Button onClick={() => void navigate(-1)} className='w-full'>
                     Go Back
                 </Button>
-                <Button onClick={() => void navigate('/user/login')} className='w-full'>
+                <Button variant='ghost' onClick={() => void navigate('/user/login')} className='w-full'>
                     To Login
                 </Button>
             </CardFooter>

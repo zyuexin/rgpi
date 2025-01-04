@@ -11,7 +11,7 @@ import (
 
 var (
 	serverCmd = &cobra.Command{
-		Use:   "server",
+		Use:   "start",
 		Short: "Start REST API Server",
 		Run:   initServer,
 	}
@@ -22,5 +22,4 @@ func initServer(cmd *cobra.Command, args []string) {
 	mysql.Connect()
 	redis.Connect()
 	router.Init()
-	zlog.Logger.Info("Server started")
 }

@@ -12,6 +12,9 @@ import (
 var RDB *redis.Client
 
 func Connect() {
+	if RDB != nil {
+		return
+	}
 	host := viper.GetString("redis.host")
 	port := viper.GetInt("redis.port")
 	addr := fmt.Sprintf("%s:%d", host, port)

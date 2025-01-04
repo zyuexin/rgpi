@@ -47,7 +47,7 @@ export default function AuthenticationPage() {
                     <div className='relative'>
                         {Cookie.exists(Cookie.USER_NAME) && (
                             <Link to='/' className={cn(buttonVariants({ variant: 'outline' }), 'absolute left-4 top-4 md:left-8 md:top-8')}>
-                                Enter With:&nbsp;&nbsp;{Cookie.get(Cookie.USER_NAME)}
+                                Enter With:&nbsp;&nbsp;<span className='text-stone-300'>{Cookie.get(Cookie.USER_NAME)}</span>
                             </Link>
                         )}
                         <Link to={pageInfo.to} className={cn(buttonVariants({ variant: 'link' }), 'absolute right-4 top-4 md:right-8 md:top-8')}>

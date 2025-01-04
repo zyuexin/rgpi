@@ -63,3 +63,7 @@ token_create_failed:
     zh_CN: 创建token失败
     en_US: Create Token Failed
     zh_TW: 創建token失敗
+menu_query_failed:
+    zh_CN: 查询菜单失败
+    en_US: Query Menu Failed
+    zh_TW: 查詢菜單失敗
