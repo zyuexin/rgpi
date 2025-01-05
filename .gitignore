@@ -24,12 +24,6 @@ yarn-error.log*
 **/node_modules/**
 
 rm_file/
-/server/log/
-/server/gva
-/server/server
-/server/latest_log
-/server/__debug_bin*
-server/uploads/
 
 *.iml
 web/.pnpm-debug.log
@@ -38,3 +32,4 @@ web/pnpm-lock.yaml
 *.history
 **/tmp/**
 *.exe
+**/logs/**

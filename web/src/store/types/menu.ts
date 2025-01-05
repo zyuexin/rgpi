@@ -22,6 +22,7 @@ export type MenuState = {
 export type MenuAction = {
     getRootMenus: (level?: number) => Promise<void>;
     getSubMenusByParentId: (parentId: string) => Promise<void>;
+    setActiveRootMenu: (id: string) => void;
 };
 
 export type MenuStore = MenuState & MenuAction;

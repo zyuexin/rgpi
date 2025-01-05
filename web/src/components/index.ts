@@ -8,3 +8,6 @@ export * from './select';
 export * from './tooltip';
 export * from './sonner';
 export * from './input-opt';
+export * from './dropdownmenu';
+export * from './resizable';
+export * from './separator';

@@ -27,6 +27,11 @@ const useMenuStore = create<MenuStore>()(
                 state.activeSubMenu = res[0].id;
                 state.subMenus = res;
             });
+        },
+        setActiveRootMenu: (id) => {
+            set((state) => {
+                state.activeRootMenu = id;
+            });
         }
     }))
 );

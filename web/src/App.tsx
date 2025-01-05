@@ -1,10 +1,9 @@
-import Header from '@/pages/main/header';
-import Content from '@/pages/main/content';
+import Content from '@/pages/main';
 
 function App() {
     return (
         <div className='app relative h-full flex flex-col overflow-hidden'>
-            <Header />
+            {/* <Header /> */}
             <Content />
         </div>
     );
