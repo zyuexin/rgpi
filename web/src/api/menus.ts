@@ -1,4 +1,4 @@
-import { MenusInfo } from '@/store/types/menu';
+import { MenusInfo } from '@/store';
 import request from './request';
 
 type QueryMenusParams<T extends number | string> = `level=${T}` | `parentId=${T}`;

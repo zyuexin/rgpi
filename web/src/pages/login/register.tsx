@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import { EMAIL_SUFFIX } from '@/utils/constants';
 import { REGEXP_ONLY_DIGITS } from 'input-otp';
-import { cn } from '@/utils/utils';
+import { cn } from '@/utils/common';
 import { Button, Input, InputWithAddon, InputOTP, InputOTPGroup, InputOTPSlot } from '@/components';
 import QQSVG from '/svg/qq.svg';
 import WechatSVG from '/svg/wechat.svg';
@@ -11,7 +11,14 @@ import { useUserStore, RegisterInfo } from '@/store';
 
 function Register() {
     const [emailSuffix, setEMailSuffix] = useState<string>(EMAIL_SUFFIX[0]);
-    const { captcha, doRegister, registerLoading, sendCaptcha, registerInfo, updateRegisterInfo } = useUserStore();
+
+    const captcha = useUserStore((s) => s.captcha);
+    const doRegister = useUserStore((s) => s.doRegister);
+    const sendCaptcha = useUserStore((s) => s.sendCaptcha);
+    const registerLoading = useUserStore((s) => s.registerLoading);
+    const updateRegisterInfo = useUserStore((s) => s.updateRegisterInfo);
+    const registerInfo = useUserStore((s) => s.registerInfo);
+
     const { control, handleSubmit, getValues, watch } = useForm<RegisterInfo>({
         values: registerInfo
     });

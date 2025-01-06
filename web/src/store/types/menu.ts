@@ -7,6 +7,7 @@ export type MenuItemInfo = {
     icon: string;
     sortOrder: number;
     description: string;
+    todoCount?: number;
 };
 
 export type MenusInfo = MenuItemInfo[];
@@ -17,6 +18,7 @@ export type MenuState = {
 
     activeSubMenu: string;
     subMenus: MenusInfo;
+    subMenusLoading: boolean;
 };
 
 export type MenuAction = {

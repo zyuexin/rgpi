@@ -11,7 +11,7 @@ const INITIAL_APP_STATE: AppState = {
         collapsible: true,
         mnSize: 8,
         maxSize: 20,
-        isCallapsed: false
+        isCollapsed: false
     }
 };
 
@@ -19,8 +19,8 @@ const useAppStore = create<AppStore>()(
     immer((set) => ({
         ...INITIAL_APP_STATE,
         setLeftPanleIsCollapsed: (c) => {
-            set((state) => {
-                state.leftResizablePanel.isCallapsed = c;
+            set((s) => {
+                s.leftResizablePanel.isCollapsed = c;
             });
         }
     }))

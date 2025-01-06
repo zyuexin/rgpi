@@ -10,7 +10,7 @@ export type AppState = {
         collapsible: boolean;
         mnSize: number;
         maxSize: number;
-        isCallapsed: boolean;
+        isCollapsed: boolean;
     };
 };
 

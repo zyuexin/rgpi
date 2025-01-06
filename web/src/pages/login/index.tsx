@@ -1,6 +1,6 @@
 import { Link, Outlet, useLocation } from 'react-router-dom';
 import { Shell } from 'lucide-react';
-import { cn } from '@/utils/utils';
+import { cn } from '@/utils/common';
 import Cookie from '@/utils/cookie';
 import { buttonVariants } from '@/components/button';
 import { useMemo } from 'react';

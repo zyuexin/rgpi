@@ -1,12 +1,14 @@
-import { cn } from '@/utils/utils';
+import { cn } from '@/utils/common';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components';
-import useAppStore from '@/store/app';
-import useMenuStore from '@/store/menu';
+import { useMenuStore, useAppStore } from '@/store';
 import { useEffect } from 'react';
 
-export function FunctionSwitcher() {
-    const { leftResizablePanel } = useAppStore();
-    const { rootMenus, activeRootMenu, setActiveRootMenu, getRootMenus } = useMenuStore();
+export function ModuleSwitcher() {
+    const isCollapsed = useAppStore((s) => s.leftResizablePanel.isCollapsed);
+    const rootMenus = useMenuStore((s) => s.rootMenus);
+    const activeRootMenu = useMenuStore((s) => s.activeRootMenu);
+    const setActiveRootMenu = useMenuStore((s) => s.setActiveRootMenu);
+    const getRootMenus = useMenuStore((s) => s.getRootMenus);
 
     useEffect(() => {
         getRootMenus();
@@ -17,15 +19,13 @@ export function FunctionSwitcher() {
             <SelectTrigger
                 className={cn(
                     'flex items-center gap-2 [&>span]:line-clamp-1 [&>span]:flex [&>span]:w-full [&>span]:items-center [&>span]:gap-1 [&>span]:truncate [&_svg]:h-4 [&_svg]:w-4 [&_svg]:shrink-0',
-                    leftResizablePanel.isCallapsed && 'flex h-9 w-9 shrink-0 items-center justify-center p-0 [&>span]:w-auto [&>svg]:hidden'
+                    isCollapsed && 'flex h-9 w-9 shrink-0 items-center justify-center p-0 [&>span]:w-auto [&>svg]:hidden'
                 )}
                 aria-label='Select account'
             >
                 <SelectValue placeholder='Select an account'>
                     <div className={rootMenus.find((menu) => menu.id === activeRootMenu)?.icon} />
-                    <span className={cn('ml-2', leftResizablePanel.isCallapsed && 'hidden')}>
-                        {rootMenus.find((menu) => menu.id === activeRootMenu)?.name}
-                    </span>
+                    <span className={cn('ml-2', isCollapsed && 'hidden')}>{rootMenus.find((menu) => menu.id === activeRootMenu)?.name}</span>
                 </SelectValue>
             </SelectTrigger>
             <SelectContent>

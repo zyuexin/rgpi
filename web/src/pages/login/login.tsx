@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import { EMAIL_SUFFIX } from '@/utils/constants';
-import { cn } from '@/utils/utils';
+import { cn } from '@/utils/common';
 import { Button } from '@/components/button';
 import { Input } from '@/components/input';
 import { InputWithAddon } from '@/components';
@@ -11,7 +11,10 @@ import { LoginInfo, useUserStore } from '@/store';
 function Login() {
     const navigate = useNavigate();
     const [emailSuffix, setEMailSuffix] = useState<string>(EMAIL_SUFFIX[0]);
-    const { loginLoading, loginInfo, doLogin, updateLoginInfo } = useUserStore();
+    const loginLoading = useUserStore((s) => s.loginLoading);
+    const updateLoginInfo = useUserStore((s) => s.updateLoginInfo);
+    const doLogin = useUserStore((s) => s.doLogin);
+    const loginInfo = useUserStore((s) => s.loginInfo);
     const { control, handleSubmit } = useForm({
         values: loginInfo
     });

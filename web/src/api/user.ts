@@ -1,4 +1,4 @@
-import { RegisterInfo, Email, CaptchInfo, LoginInfo, UserInfo } from '@/store/types/user';
+import { RegisterInfo, Email, CaptchInfo, LoginInfo, UserInfo } from '@/store';
 import request, { AxiosResponse } from './request';
 
 export const sendCaptcha = async (email: Email) => {

@@ -22,5 +22,5 @@ func (ms *MenusService) GetMenusByLevel(c *gin.Context, level int) ([]models.Men
 }
 
 func (ms *MenusService) GetMenusByParentId(c *gin.Context, parentId string) ([]models.Menu, error) {
-	return []models.Menu{}, nil
+	return ms.Repo.GetMenusByParentId(c, parentId)
 }

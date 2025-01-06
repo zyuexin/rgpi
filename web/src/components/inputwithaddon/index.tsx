@@ -1,7 +1,7 @@
 import React from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/select';
 import { InputProps, Input } from '../input';
-import { cn } from '@/utils/utils';
+import { cn } from '@/utils/common';
 import { NonEmptyString } from '@/utils/typeutils';
 
 export type InputWithAddonProps = InputProps & {

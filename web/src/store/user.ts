@@ -41,17 +41,17 @@ const useUserStore = create<UserStore>()(
     immer((set) => ({
         ...INITIAL_USER_STATE,
         sendCaptcha: async (email) => {
-            set((state) => {
-                state.captcha.loading = true;
+            set((s) => {
+                s.captcha.loading = true;
             });
             const res = await sendCaptcha(email);
-            set((state) => {
-                state.captcha = {
+            set((s) => {
+                s.captcha = {
                     ...(res || {}),
                     loading: false,
                     countdown: res.expiration
                 };
-                state.captcha.countdownInterval = setInterval(() => {
+                s.captcha.countdownInterval = setInterval(() => {
                     set((s) => {
                         if ((s.captcha.countdown || 0) > 0) {
                             s.captcha.countdown! -= 1;
@@ -65,54 +65,54 @@ const useUserStore = create<UserStore>()(
             });
         },
         resetCaptchaCountdown: () => {
-            set((state) => {
-                if (state.captcha.countdownInterval) {
-                    clearInterval(state.captcha.countdownInterval);
+            set((s) => {
+                if (s.captcha.countdownInterval) {
+                    clearInterval(s.captcha.countdownInterval);
                 }
-                state.captcha = {
-                    ...state.captcha,
+                s.captcha = {
+                    ...s.captcha,
                     countdown: 0,
                     countdownInterval: undefined
                 };
             });
         },
         updateRegisterInfo: (info) => {
-            set((state) => {
-                state.registerInfo = info;
+            set((s) => {
+                s.registerInfo = info;
             });
         },
         updateLoginInfo: (info) => {
-            set((state) => {
-                state.loginInfo = info;
+            set((s) => {
+                s.loginInfo = info;
             });
         },
         doRegister: async (registerInfo) => {
-            set((state) => {
-                state.registerLoading = true;
+            set((s) => {
+                s.registerLoading = true;
             });
             await register<AxiosResponse<undefined>>(registerInfo);
-            set((state) => (state.registerLoading = false));
+            set((s) => (s.registerLoading = false));
         },
         doLogin: async (info: LoginInfo) => {
-            set((state) => {
-                state.loginLoading = true;
+            set((s) => {
+                s.loginLoading = true;
             });
             const res = await login(info);
             if (!res) {
-                set((state) => {
-                    state.loginLoading = false;
+                set((s) => {
+                    s.loginLoading = false;
                 });
                 return false;
             }
             const token = Cookie.get('Authorization');
             token && localStorage.setItem('token', token);
-            set((state) => {
-                state.loginLoading = false;
-                state.loginInfo = {
+            set((s) => {
+                s.loginLoading = false;
+                s.loginInfo = {
                     email: '',
                     password: ''
                 };
-                state.userInfo = res || {};
+                s.userInfo = res || {};
             });
             return true;
         }
