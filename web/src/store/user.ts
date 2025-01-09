@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 import type { UserState, UserStore, LoginInfo } from './types/user';
-import { register, login, sendCaptcha } from '@/api/user';
+import { register, login, sendCaptcha, getUserInfo, updateUserInfo } from '@/api/user';
 import { AxiosResponse } from '@/api/request';
 import Cookie from '@/utils/cookie';
 
@@ -24,9 +24,7 @@ const INITIAL_USER_STATE: UserState = {
         email: '',
         avatar: '',
         lang: 'en_US',
-        theme: 'system',
-        createdAt: '',
-        updatedAt: ''
+        theme: 'system'
     },
     captcha: {
         loading: false,
@@ -69,11 +67,8 @@ const useUserStore = create<UserStore>()(
                 if (s.captcha.countdownInterval) {
                     clearInterval(s.captcha.countdownInterval);
                 }
-                s.captcha = {
-                    ...s.captcha,
-                    countdown: 0,
-                    countdownInterval: undefined
-                };
+                s.captcha.countdown = 0;
+                s.captcha.countdownInterval = undefined;
             });
         },
         updateRegisterInfo: (info) => {
@@ -115,6 +110,20 @@ const useUserStore = create<UserStore>()(
                 s.userInfo = res || {};
             });
             return true;
+        },
+        getUserInfo: async (email) => {
+            const res = (await getUserInfo(email)) || {};
+            set((s) => {
+                s.userInfo = res;
+            });
+            return res;
+        },
+        updateUserInfo: async (field, value) => {
+            const info = { ...useUserStore.getState().userInfo, [field]: value };
+            const res = await updateUserInfo(info);
+            set((s) => {
+                s.userInfo = res || {};
+            });
         }
     }))
 );

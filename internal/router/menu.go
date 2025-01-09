@@ -15,4 +15,5 @@ func InitMenuRoutes(r *gin.Engine) {
 	menusService := services.NewMenusService(menusRepositoryImpl)
 	menuController := controllers.NewMenusController(menusService)
 	r.GET("/menus", menuController.GetMenus)
+	r.GET("/treemenus", menuController.GetTreeMenus)
 }

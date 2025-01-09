@@ -11,8 +11,6 @@ export type UserInfo = {
     avatar: string;
     lang: string;
     theme: Theme;
-    createdAt: string;
-    updatedAt: string;
 };
 
 /** 后台返回的验证码信息 */
@@ -69,6 +67,8 @@ export type UserActions = {
     doRegister: (registerInfo: RegisterInfo) => Promise<void>;
     // 用户登录
     doLogin: (loginInfo: LoginInfo) => Promise<boolean>;
+    getUserInfo: (email: string) => Promise<UserInfo>;
+    updateUserInfo: (field: keyof UserInfo, value: UserInfo[keyof UserInfo]) => Promise<void>;
 };
 
 export type UserStore = UserState & UserActions;

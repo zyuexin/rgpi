@@ -10,3 +10,8 @@ type Menu struct {
 	SortOrder   int    `gorm:"default:0" json:"sortOrder"`       // 菜单排序(同级菜单排序顺序，数值越小越靠前，默认为0)
 	Description string `gorm:"size:500" json:"description"`      // 菜单描述
 }
+
+type TreeMenu struct {
+	Menu
+	Children []*TreeMenu `json:"children"`
+}

@@ -17,3 +17,13 @@ export const login = async (info: LoginInfo) => {
     const res = await request.post<UserInfo>('/user/login', info);
     return res as UserInfo;
 };
+
+export const updateUserInfo = async (info: UserInfo) => {
+    const res = await request.post<UserInfo>('/user/update', info);
+    return res as UserInfo;
+};
+
+export const getUserInfo = async (email: string) => {
+    const res = await request.get<UserInfo>(`/user/info?email=${email}`, { shouldToast: false });
+    return res as UserInfo;
+};

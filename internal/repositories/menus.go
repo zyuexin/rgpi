@@ -1,7 +1,6 @@
 package repositories
 
 import (
-	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 
@@ -9,8 +8,9 @@ import (
 )
 
 type MenusRepository interface {
-	GetMenusByLevel(c *gin.Context, level int) (menus []models.Menu, err error)
-	GetMenusByParentId(c *gin.Context, parentId string) (menus []models.Menu, err error)
+	GetMenusByLevel(level int) (menus []models.Menu, err error)
+	GetMenusByParentId(parentId string) (menus []models.Menu, err error)
+	GetAllMenus() (menus []models.Menu, err error)
 }
 
 type MenusRepositoryImpl struct {
@@ -25,14 +25,20 @@ func NewMenusRepository(db *gorm.DB, rdb *redis.Client) *MenusRepositoryImpl {
 	}
 }
 
-func (r *MenusRepositoryImpl) GetMenusByLevel(c *gin.Context, level int) (menus []models.Menu, err error) {
+func (r *MenusRepositoryImpl) GetMenusByLevel(level int) (menus []models.Menu, err error) {
 	menus = []models.Menu{}
 	r.DB.Where("level = ?", level).Find(&menus)
 	return menus, err
 }
 
-func (r *MenusRepositoryImpl) GetMenusByParentId(c *gin.Context, parentId string) (menus []models.Menu, err error) {
+func (r *MenusRepositoryImpl) GetMenusByParentId(parentId string) (menus []models.Menu, err error) {
 	menus = []models.Menu{}
 	r.DB.Where("parent_id = ?", parentId).Find(&menus)
+	return menus, err
+}
+
+func (r *MenusRepositoryImpl) GetAllMenus() (menus []models.Menu, err error) {
+	menus = []models.Menu{}
+	r.DB.Find(&menus)
 	return menus, err
 }

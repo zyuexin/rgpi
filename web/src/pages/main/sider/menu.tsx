@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { cn } from '@/utils/common';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider, buttonVariants, Loading } from '@/components';
@@ -8,9 +9,12 @@ export function Menu() {
     const subMenusLoading = useMenuStore((s) => s.subMenusLoading);
     const subMenus = useMenuStore((s) => s.subMenus);
     const activeSubMenu = useMenuStore((s) => s.activeSubMenu);
+    const activeRootMenu = useMenuStore((s) => s.activeRootMenu);
+
+    const actSubMenu = useMemo(() => activeSubMenu.get(activeRootMenu), [activeRootMenu, activeSubMenu]);
 
     return (
-        <div data-collapsed={isCollapsed} className='group h-full overflow-hidden flex flex-col gap-4 py-2 data-[collapsed=true]:py-2'>
+        <div data-collapsed={isCollapsed} className='group h-full overflow-hidden flex-1 flex flex-col gap-4 py-2 data-[collapsed=true]:py-2'>
             {subMenusLoading ? (
                 <div className='m-auto'>
                     <Loading className='self-center' />
@@ -25,9 +29,9 @@ export function Menu() {
                                         <Link
                                             to={link.path}
                                             className={cn(
-                                                buttonVariants({ variant: activeSubMenu === link.id ? 'default' : 'ghost', size: 'icon' }),
+                                                buttonVariants({ variant: actSubMenu === link.id ? 'default' : 'ghost', size: 'icon' }),
                                                 'h-9 w-9',
-                                                link.id === activeSubMenu &&
+                                                link.id === actSubMenu &&
                                                     'dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white'
                                             )}
                                         >
@@ -46,15 +50,15 @@ export function Menu() {
                                 key={index}
                                 to={link.path}
                                 className={cn(
-                                    buttonVariants({ variant: activeSubMenu === link.id ? 'default' : 'ghost', size: 'sm' }),
-                                    link.id !== activeSubMenu && 'dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white',
+                                    buttonVariants({ variant: actSubMenu === link.id ? 'default' : 'ghost', size: 'sm' }),
+                                    link.id !== actSubMenu && 'dark:bg-muted dark:text-white dark:hover:bg-muted dark:hover:text-white',
                                     'justify-start'
                                 )}
                             >
                                 <div className={cn('mr-2 h-4 w-4 flex items-center', link.icon)} />
                                 {link.name}
                                 {link.name && (
-                                    <span className={cn('ml-auto', link.id === activeSubMenu && 'text-background dark:text-white')}>{1234}</span>
+                                    <span className={cn('ml-auto', link.id === actSubMenu && 'text-background dark:text-white')}>{1234}</span>
                                 )}
                             </Link>
                         )

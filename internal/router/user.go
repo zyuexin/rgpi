@@ -16,9 +16,11 @@ func InitUserRoutes(r *gin.Engine) {
 	userController := controllers.NewUserController(userService)
 	user := r.Group("/user")
 	{
+		user.GET("/info", userController.GetUserInfoHandler)
 		user.GET("/captcha", userController.SendCaptchaHandler)
 		user.POST("/register", userController.RegisterHandler)
 		user.POST("/login", userController.LoginHandler)
-		user.PUT("/update", userController.UpdateHandler)
+		user.POST("/info", userController.UpdateHandler)
+		// user.POST("/prefermenu", userController.UpdateUserPreferMenuHandler)
 	}
 }

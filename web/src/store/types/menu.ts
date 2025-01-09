@@ -8,23 +8,31 @@ export type MenuItemInfo = {
     sortOrder: number;
     description: string;
     todoCount?: number;
+    children: MenuItemInfo[];
 };
 
-export type MenusInfo = MenuItemInfo[];
+export type MenuLevel = `${number}`;
+export type PreferMenus = Array<
+    {
+        active: boolean;
+    } & {
+        [key: MenuLevel]: string;
+    }
+>;
 
 export type MenuState = {
-    activeRootMenu: string;
-    rootMenus: MenusInfo;
-
-    activeSubMenu: string;
-    subMenus: MenusInfo;
+    treeMenus: MenuItemInfo[];
+    rootMenus: MenuItemInfo[];
+    subMenus: MenuItemInfo[];
     subMenusLoading: boolean;
+    preferMenus: PreferMenus;
 };
 
 export type MenuAction = {
-    getRootMenus: (level?: number) => Promise<void>;
-    getSubMenusByParentId: (parentId: string) => Promise<void>;
-    setActiveRootMenu: (id: string) => void;
+    getRootMenus: () => Promise<MenuItemInfo[]>;
+    getSubMenusByParentId: (parentId: string) => Promise<MenuItemInfo[]>;
+    getTreeMenus: () => Promise<MenuItemInfo[]>;
+    updatePreferMenus: (preferMenus: MenuItemInfo) => void;
 };
 
 export type MenuStore = MenuState & MenuAction;

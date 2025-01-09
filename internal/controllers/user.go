@@ -93,6 +93,30 @@ func (uc *UserController) LoginHandler(c *gin.Context) {
 }
 
 func (uc *UserController) UpdateHandler(c *gin.Context) {
+	var (
+		user models.User
+		err  error
+	)
+	if err = c.ShouldBindJSON(&user); err != nil {
+		response.Error(c, http.StatusBadRequest, response.FailCode, "invalid_params")
+		return
+	}
+	_, err = uc.Svr.Update(c, &user)
+	if err != nil {
+		response.Error(c, http.StatusBadRequest, response.FailCode, "update_fail")
+	} else {
+		response.Success(c, response.SuccessCode, user, "update_success")
+	}
+}
+
+func (uc *UserController) GetUserInfoHandler(c *gin.Context) {
+	email := c.Query("email")
+	user, err := uc.Svr.GetUserInfoByEmail(c, email)
+	if err != nil {
+		response.Error(c, http.StatusBadRequest, response.FailCode, "get_user_info_fail")
+	} else {
+		response.Success(c, response.SuccessCode, user, "get_user_info_success")
+	}
 }
 
 func (uc *UserController) LogoutHandler(c *gin.Context) {

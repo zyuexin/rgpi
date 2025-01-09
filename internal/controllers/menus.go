@@ -28,14 +28,23 @@ func (mc *MenusController) GetMenus(c *gin.Context) {
 	if levelStr != "" {
 		level, er := strconv.Atoi(levelStr)
 		if er == nil {
-			menus, err = mc.Svr.GetMenusByLevel(c, level)
+			menus, err = mc.Svr.GetMenusByLevel(level)
 		}
 	} else if parentId != "" {
-		menus, err = mc.Svr.GetMenusByParentId(c, parentId)
+		menus, err = mc.Svr.GetMenusByParentId(parentId)
 	}
 	if err != nil {
 		response.Error(c, response.FailCode, response.FailCode, "menu_query_failed")
 		return
 	}
 	response.Success(c, response.SuccessCode, menus, "menu_query_success")
+}
+
+func (mc *MenusController) GetTreeMenus(c *gin.Context) {
+	menu, err := mc.Svr.GetTreeMenus(c)
+	if err != nil {
+		response.Error(c, response.FailCode, response.FailCode, "menu_query_failed")
+		return
+	}
+	response.Success(c, response.SuccessCode, menu, "menu_query_success")
 }

@@ -1,45 +1,54 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
-import type { MenuState, MenuStore } from './types/menu';
-import { queryMenus } from '@/api/menus';
+import type { MenuItemInfo, MenuState, MenuStore } from './types/menu';
+import { queryMenus, queryTreeMenus } from '@/api/menus';
+import CookieUtil from '@/utils/cookie';
+import { flatten, generateDefaultPreferMenus } from '@/utils/common';
 
 const INITIAL_MENU_STATE: MenuState = {
-    activeRootMenu: '',
+    treeMenus: [],
     rootMenus: [],
-
-    activeSubMenu: '',
     subMenus: [],
+    preferMenus: JSON.parse(CookieUtil.get('PreferMenus') || '[]') || [],
     subMenusLoading: false
 };
 
 const useMenuStore = create<MenuStore>()(
     immer((set, get) => ({
         ...INITIAL_MENU_STATE,
-        getRootMenus: async (level = 0) => {
-            if (get().activeRootMenu?.length > 0) return;
-            const res = await queryMenus<number>(`level=${level}`);
+        getRootMenus: async () => {
+            const rm = get().rootMenus;
+            if (rm?.length > 0) return rm;
+            const res = await queryMenus<number>(`level=${0}`);
             set((s) => {
-                const firstMenu = res[0];
-                s.activeRootMenu = s.activeRootMenu ? s.activeRootMenu : firstMenu.id;
-                firstMenu && s.getSubMenusByParentId(firstMenu.id);
                 s.rootMenus = res;
             });
+            return res;
         },
         getSubMenusByParentId: async (parentId) => {
-            const res = await queryMenus<string>(`parentId=${parentId}`);
+            const res = (await queryMenus<string>(`parentId=${parentId}`)) || [];
             set((s) => {
                 s.subMenusLoading = false;
-                s.activeSubMenu = s.activeSubMenu ? s.activeSubMenu : res?.[0]?.id;
                 s.subMenus = res;
             });
+            return res;
         },
-        setActiveRootMenu: (id) => {
+        getTreeMenus: async () => {
+            const res = (await queryTreeMenus()) || [];
+            // 生成默认偏好菜单列表
+            let preferMenus = get().preferMenus;
+            if (preferMenus.length <= 0) {
+                const flattenedMenus = flatten<MenuItemInfo[]>(res);
+                preferMenus = generateDefaultPreferMenus(flattenedMenus);
+            }
+
             set((s) => {
-                s.activeRootMenu = id;
-                s.subMenusLoading = true;
-                s.getSubMenusByParentId(id);
+                s.treeMenus = res;
+                s.preferMenus = preferMenus;
             });
-        }
+            return res;
+        },
+        updatePreferMenus: (menuItem: MenuItemInfo) => {}
     }))
 );
 

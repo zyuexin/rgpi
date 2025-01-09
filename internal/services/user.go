@@ -74,9 +74,29 @@ func (us *UserService) Register(c *gin.Context, params models.RequestParamsOfReg
 	if ttl < 1 {
 		return errors.New("captcha_is_expired")
 	}
-	if isRegister, _ := us.Repo.IsRegister(c, params.Email); isRegister {
+	if isRegister, _ := us.Repo.FindByEmail(c, params.Email); isRegister {
 		return errors.New("email_is_registered")
 	}
+
+	// preferMenu := []map[string]interface{}{
+	// 	{
+	// 		"0":      "system",
+	// 		"1":      "monitor",
+	// 		"active": true,
+	// 	},
+	// 	{
+	// 		"0":      "storage",
+	// 		"1":      "substorage1",
+	// 		"active": false,
+	// 	},
+	// 	{
+	// 		"0":      "toolkit",
+	// 		"1":      "todos",
+	// 		"active": false,
+	// 	},
+	// }
+
+	// jsonData, _ := json.Marshal(preferMenu)
 
 	user := &models.User{
 		Email:     params.Email,
@@ -102,7 +122,7 @@ func (us *UserService) Register(c *gin.Context, params models.RequestParamsOfReg
 // 用户登录
 func (us *UserService) Login(c *gin.Context, params models.RequestParamsOfLogin) (*models.User, error) {
 	var user *models.User
-	isRegister, user := us.Repo.IsRegister(c, params.Email)
+	isRegister, user := us.Repo.FindByEmail(c, params.Email)
 	if !isRegister {
 		return nil, errors.New("email_is_not_registered")
 	}
@@ -119,7 +139,6 @@ func (us *UserService) Login(c *gin.Context, params models.RequestParamsOfLogin)
 		return nil, errors.New("token_create_failed")
 	}
 	// 2.更新用户最后登录时间
-	user.UpdatedAt = time.Now().Unix()
 	err = us.Repo.Update(user)
 	// 3.向cookie中写入token
 	if err == nil {
@@ -130,8 +149,26 @@ func (us *UserService) Login(c *gin.Context, params models.RequestParamsOfLogin)
 	return nil, err
 }
 
-func (us *UserService) Update(username string, password string) {
+func (us *UserService) Update(c *gin.Context, u *models.User) (*models.User, error) {
+	isRegistered, user := us.Repo.FindByEmail(c, u.Email)
+	if !isRegistered || user == nil {
+		return u, errors.New("user_not_found")
+	}
+	updateAt := u.UpdatedAt
+	if err := us.Repo.Update(u); err != nil {
+		u.UpdatedAt = updateAt
+		return u, err
+	}
+	_, user = us.Repo.FindByEmail(c, u.Email)
+	return user, nil
+}
 
+func (us *UserService) GetUserInfoByEmail(c *gin.Context, email string) (*models.User, error) {
+	_, user := us.Repo.FindByEmail(c, email)
+	if user == nil {
+		return nil, errors.New("user_not_found")
+	}
+	return user, nil
 }
 
 func (us *UserService) Logout(username string, password string) {
