@@ -38,7 +38,7 @@ func (uc *UserController) SendCaptchaHandler(c *gin.Context) {
 	}
 	// 发送验证码
 	expiration, err := uc.Svr.SendCaptcha(c, email)
-	if err != nil {
+	if err != nil && expiration < 1 {
 		response.Error(c, http.StatusBadRequest, response.FailCode, err.Error())
 		return
 	}
@@ -63,7 +63,7 @@ func (uc *UserController) RegisterHandler(c *gin.Context) {
 		return
 	}
 	if err := uc.Svr.Register(c, params); err != nil {
-		response.Error(c, http.StatusBadRequest, response.FailCode, "register_fail")
+		response.Error(c, http.StatusBadRequest, response.FailCode, err.Error())
 	} else {
 		response.Success(c, response.SuccessCode, nil, "register_success")
 	}
@@ -120,5 +120,5 @@ func (uc *UserController) GetUserInfoHandler(c *gin.Context) {
 }
 
 func (uc *UserController) LogoutHandler(c *gin.Context) {
-
+	response.Success(c, response.SuccessCode, nil, "LogoutHandler")
 }

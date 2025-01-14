@@ -11,3 +11,4 @@ export * from './input-opt';
 export * from './dropdownmenu';
 export * from './resizable';
 export * from './separator';
+export * from './icon';

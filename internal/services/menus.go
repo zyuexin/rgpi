@@ -44,33 +44,41 @@ func (ms *MenusService) GetTreeMenus(c *gin.Context) (menus []*models.TreeMenu, 
 }
 
 func buildTreeMenu(menus []models.Menu) ([]*models.TreeMenu, error) {
-	// 创建一个映射，用于快速查找菜单项
 	menuMap := make(map[string]*models.Menu)
 	for _, menu := range menus {
 		menuMap[menu.ID] = &menu
 	}
 
-	// 创建一个列表，用于存储最终的树状菜单
 	var treeMenus []*models.TreeMenu
 
-	// 遍历菜单映射，构建树状结构
 	for _, menu := range menuMap {
-		if menu.ParentID == "0" { // 顶级菜单
+		if menu.Level == 0 { // 顶级菜单
 			treeMenu := &models.TreeMenu{Menu: *menu, Children: nil}
 			treeMenus = append(treeMenus, treeMenu)
+			sort.Slice(treeMenus, func(i, j int) bool {
+				return treeMenus[i].SortOrder < treeMenus[j].SortOrder
+			})
 			addChildMenus(menuMap, treeMenu)
 		}
 	}
 	return treeMenus, nil
 }
 
-// addChildMenus 递归地为菜单项添加子菜单
+// addChildMenus 递归地为菜单项添加子菜单，并在添加前按SortOrder排序
 func addChildMenus(menuMap map[string]*models.Menu, treeMenu *models.TreeMenu) {
+	var sortedMenus []*models.Menu
 	for _, menu := range menuMap {
 		if menu.ParentID == treeMenu.ID {
-			childTreeMenu := &models.TreeMenu{Menu: *menu, Children: nil}
-			treeMenu.Children = append(treeMenu.Children, childTreeMenu)
-			addChildMenus(menuMap, childTreeMenu)
+			sortedMenus = append(sortedMenus, menu)
 		}
+	}
+	sort.Slice(sortedMenus, func(i, j int) bool {
+		return sortedMenus[i].SortOrder < sortedMenus[j].SortOrder
+	})
+
+	for _, menu := range sortedMenus {
+		childTreeMenu := &models.TreeMenu{Menu: *menu, Children: nil}
+		treeMenu.Children = append(treeMenu.Children, childTreeMenu)
+		addChildMenus(menuMap, childTreeMenu)
 	}
 }

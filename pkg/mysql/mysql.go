@@ -39,7 +39,15 @@ func Connect() {
 		zlog.Logger.Error(`😫: Connected failed, check your Mysql with ` + args)
 	}
 
-	migrateErr := db.AutoMigrate(&models.User{}, &models.Menu{})
+	migrateErr := db.AutoMigrate(
+		&models.User{},
+		&models.Menu{},
+		&models.UserStatesCache{},
+		&models.TodoStatusCate{},
+		&models.TodoPriorityCate{},
+		&models.TodoGroup{},
+		&models.Todo{},
+	)
 
 	if migrateErr != nil {
 		panic(migrateErr)

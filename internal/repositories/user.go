@@ -16,6 +16,7 @@ type UserRepository interface {
 	FindByEmail(ctx *gin.Context, email string) (bool, *models.User)
 	ClearCaptcha(ctx *gin.Context, email string) (string, error)
 	Create(user *models.User) error
+	CreateStatesCache(user *models.User) error
 	Update(user *models.User) error
 	Logout() error
 }
@@ -57,10 +58,23 @@ func (repo *UserRepositoryImpl) ClearCaptcha(ctx *gin.Context, email string) (st
 }
 
 // 检查邮箱是否已经注册
-func (repo *UserRepositoryImpl) FindByEmail(ctx *gin.Context, email string) (bool, *models.User) {
+func (repo *UserRepositoryImpl) FindByEmail(c *gin.Context, email string) (bool, *models.User) {
 	var user models.User
 	result := repo.DB.First(&user, "email = ?", email)
-	return result.Error != gorm.ErrRecordNotFound, &user
+	isRegistered := result.Error != gorm.ErrRecordNotFound
+	if !isRegistered {
+		// 获取所有已经存在的Cookie的名字
+		for _, cookie := range c.Request.Cookies() {
+			// 创建一个新的Cookie，并将过期时间设置为一个过去的日期
+			cookie.Expires = time.Unix(0, 0)
+			cookie.MaxAge = -1
+			cookie.Path = "/" // 设置Path以确保能匹配到原来的Cookie
+
+			// 设置Cookie到响应中，实际上是将这个Cookie删除
+			c.SetCookie(cookie.Name, cookie.Value, cookie.MaxAge, cookie.Path, cookie.Domain, false, false)
+		}
+	}
+	return isRegistered, &user
 }
 
 func (repo *UserRepositoryImpl) Create(user *models.User) error {
@@ -81,6 +95,22 @@ func (repo *UserRepositoryImpl) Update(user *models.User) error {
 	}
 	if tx.RowsAffected == 0 {
 		return gorm.ErrRecordNotFound
+	}
+	return nil
+}
+
+func (repo *UserRepositoryImpl) CreateStatesCache(user *models.User) error {
+	userStatesCache := models.UserStatesCache{
+		Email:      user.Email,
+		PreferMenu: "[]",
+	}
+	// 检查是否存在该邮箱的记录
+	var existingUser models.UserStatesCache
+	result := repo.DB.Where("email = ?", user.Email).First(&existingUser)
+	if result.Error == nil {
+		return nil
+	} else if result = repo.DB.Create(&userStatesCache); result.Error != nil {
+		return result.Error
 	}
 	return nil
 }

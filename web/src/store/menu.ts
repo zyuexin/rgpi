@@ -1,9 +1,8 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
-import type { MenuItemInfo, MenuState, MenuStore } from './types/menu';
+import type { MenuLevel, MenuState, MenuStore, PreferMenus } from './types/menu';
 import { queryMenus, queryTreeMenus } from '@/api/menus';
 import CookieUtil from '@/utils/cookie';
-import { flatten, generateDefaultPreferMenus } from '@/utils/common';
 
 const INITIAL_MENU_STATE: MenuState = {
     treeMenus: [],
@@ -35,20 +34,34 @@ const useMenuStore = create<MenuStore>()(
         },
         getTreeMenus: async () => {
             const res = (await queryTreeMenus()) || [];
-            // 生成默认偏好菜单列表
-            let preferMenus = get().preferMenus;
-            if (preferMenus.length <= 0) {
-                const flattenedMenus = flatten<MenuItemInfo[]>(res);
-                preferMenus = generateDefaultPreferMenus(flattenedMenus);
-            }
-
             set((s) => {
                 s.treeMenus = res;
-                s.preferMenus = preferMenus;
             });
             return res;
         },
-        updatePreferMenus: (menuItem: MenuItemInfo) => {}
+        updatePreferMenus: (menuId: string, level: number) => {
+            const preferMenusCopied: PreferMenus = JSON.parse(JSON.stringify(get().preferMenus));
+            if (level === 0) {
+                for (const item of preferMenusCopied) {
+                    item.active = menuId === item['0'];
+                }
+            } else {
+                const activeRootMenu = preferMenusCopied.find((item) => item.active);
+                if (activeRootMenu) {
+                    activeRootMenu[level.toString() as MenuLevel] = menuId;
+                }
+            }
+            set((s) => {
+                s.preferMenus = preferMenusCopied;
+            });
+            CookieUtil.set('PreferMenus', JSON.stringify(preferMenusCopied), { path: '/' });
+        },
+        setPreferMenus: (preferMenus) => {
+            CookieUtil.set('PreferMenus', JSON.stringify(preferMenus), { path: '/' });
+            set((s) => {
+                s.preferMenus = preferMenus;
+            });
+        }
     }))
 );
 

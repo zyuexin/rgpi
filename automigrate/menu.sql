@@ -9,4 +9,4 @@ VALUES
 ('substorage2', 'Substorage2', 'storage', '/storage/substorage2', 1, 'icon-flask-conical', 1, 'Description for substorage2'),
 ('toolkit', 'Toolkit', NULL, '/toolkit', 0, 'icon-hammer', 2, 'Tools Kit'),
 ('todos', 'Todos', 'toolkit', '/toolkit/todos', 1, 'icon-alarm-clock-check', 0, 'Todo List'),
-('notes', 'Notes', 'toolkit', '/toolkit/notes', 1, 'icon-notebook', 1, 'Todo List');
+('notes', 'Notes', 'toolkit', '/toolkit/notes', 1, 'icon-notebook', 1, 'Notes Book');

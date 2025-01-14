@@ -21,6 +21,6 @@ func InitUserRoutes(r *gin.Engine) {
 		user.POST("/register", userController.RegisterHandler)
 		user.POST("/login", userController.LoginHandler)
 		user.POST("/info", userController.UpdateHandler)
-		// user.POST("/prefermenu", userController.UpdateUserPreferMenuHandler)
+		// user.DELETE("/logout", userController.LogoutHandler)
 	}
 }

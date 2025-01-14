@@ -32,7 +32,8 @@ export type MenuAction = {
     getRootMenus: () => Promise<MenuItemInfo[]>;
     getSubMenusByParentId: (parentId: string) => Promise<MenuItemInfo[]>;
     getTreeMenus: () => Promise<MenuItemInfo[]>;
-    updatePreferMenus: (preferMenus: MenuItemInfo) => void;
+    updatePreferMenus: (menuId: string, level: number) => void;
+    setPreferMenus: (preferMenus: PreferMenus) => void;
 };
 
 export type MenuStore = MenuState & MenuAction;

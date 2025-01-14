@@ -78,26 +78,6 @@ func (us *UserService) Register(c *gin.Context, params models.RequestParamsOfReg
 		return errors.New("email_is_registered")
 	}
 
-	// preferMenu := []map[string]interface{}{
-	// 	{
-	// 		"0":      "system",
-	// 		"1":      "monitor",
-	// 		"active": true,
-	// 	},
-	// 	{
-	// 		"0":      "storage",
-	// 		"1":      "substorage1",
-	// 		"active": false,
-	// 	},
-	// 	{
-	// 		"0":      "toolkit",
-	// 		"1":      "todos",
-	// 		"active": false,
-	// 	},
-	// }
-
-	// jsonData, _ := json.Marshal(preferMenu)
-
 	user := &models.User{
 		Email:     params.Email,
 		Password:  params.Password,
@@ -110,6 +90,9 @@ func (us *UserService) Register(c *gin.Context, params models.RequestParamsOfReg
 		DeletedAt: 0,
 	}
 	if err = us.Repo.Create(user); err != nil {
+		return err
+	}
+	if err = us.Repo.CreateStatesCache(user); err != nil {
 		return err
 	}
 
@@ -131,10 +114,7 @@ func (us *UserService) Login(c *gin.Context, params models.RequestParamsOfLogin)
 	}
 	// 1.生成token
 	jwt := middlewares.NewJwt()
-	token, err := jwt.CreateToken(middlewares.CustomClaims{
-		Email:    user.Email,
-		Nickname: user.Nickname,
-	})
+	token, err := jwt.CreateToken(middlewares.NewDfalutClaims(user.Email, user.Nickname, jwt.Expiration))
 	if err != nil {
 		return nil, errors.New("token_create_failed")
 	}
@@ -164,13 +144,12 @@ func (us *UserService) Update(c *gin.Context, u *models.User) (*models.User, err
 }
 
 func (us *UserService) GetUserInfoByEmail(c *gin.Context, email string) (*models.User, error) {
-	_, user := us.Repo.FindByEmail(c, email)
+	isRegister, user := us.Repo.FindByEmail(c, email)
+	if !isRegister {
+		return nil, errors.New("email_is_not_registered")
+	}
 	if user == nil {
 		return nil, errors.New("user_not_found")
 	}
 	return user, nil
-}
-
-func (us *UserService) Logout(username string, password string) {
-
 }

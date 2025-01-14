@@ -18,6 +18,7 @@ const (
 	EMAIL         = "Email"
 	AUTHORIZATION = "Authorization"
 	BEARER        = "Bearer"
+	PREFER_MENU   = "PreferMenus"
 )
 
 var (
@@ -34,11 +35,11 @@ type CustomClaims struct {
 }
 
 type Jwt struct {
-	signKey    []byte
-	expiration int64
+	SignKey    []byte
+	Expiration time.Duration
 }
 
-func NewDfalutClaims(id, email, nickname string, expiration time.Duration) CustomClaims {
+func NewDfalutClaims(email, nickname string, expiration time.Duration) CustomClaims {
 	beforeTime := jwt.NewNumericDate(time.Now())
 	expiresTime := jwt.NewNumericDate(beforeTime.Add(expiration))
 	return CustomClaims{
@@ -54,17 +55,17 @@ func NewDfalutClaims(id, email, nickname string, expiration time.Duration) Custo
 
 func NewJwt() *Jwt {
 	secret := viper.GetString("jwt.secret")
-	expiration := viper.GetInt64("jwt.expiration")
+	expiration := time.Duration(viper.GetInt64("jwt.expiration"))
 	return &Jwt{
-		signKey:    []byte(secret),
-		expiration: expiration,
+		SignKey:    []byte(secret),
+		Expiration: expiration,
 	}
 }
 
 // CreateToken 创建新的 Token
 func (j *Jwt) CreateToken(claims CustomClaims) (token string, err error) {
 	withClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	token, err = withClaims.SignedString(j.signKey)
+	token, err = withClaims.SignedString(j.SignKey)
 	return fmt.Sprintf("%s %s", BEARER, token), err
 }
 
@@ -74,14 +75,14 @@ func (j *Jwt) ParseToken(token string) (*CustomClaims, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		return []byte(j.signKey), nil
+		return []byte(j.SignKey), nil
 	})
 	if !withClaims.Valid || err != nil {
 		return nil, ErrTokenInvalid
 	}
 	claims, ok := withClaims.Claims.(*CustomClaims)
 
-	if float64(claims.ExpiresAt.Unix()) < float64(time.Now().Unix()) {
+	if claims.ExpiresAt != nil && float64(claims.ExpiresAt.Unix()) < float64(time.Now().Unix()) {
 		return nil, ErrTokenExpired
 	}
 	if !ok {
@@ -100,13 +101,13 @@ func JwtHandler() gin.HandlerFunc {
 			return
 		}
 
-		tokenStr := ctx.GetHeader(AUTHORIZATION)
+		tokenStr, _ := ctx.Cookie(AUTHORIZATION)
 		if tokenStr == "" {
 			ctx.Abort()
 			ctx.JSON(http.StatusUnauthorized, gin.H{"code": http.StatusUnauthorized, "message": "Not Authorized"})
 			return
 		}
-		parts := strings.Split(tokenStr, "+")
+		parts := strings.Split(tokenStr, " ")
 
 		if len(parts) != 2 || parts[0] != BEARER {
 			ctx.Abort()

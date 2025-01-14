@@ -17,6 +17,11 @@ const Login = LazyLoad(
     true
 );
 
+const SystemMonitor = LazyLoad(lazy(() => import('@/pages/main/system/monitor')));
+const SystemLogs = LazyLoad(lazy(() => import('@/pages/main/system/logsquery')));
+const ToolkitNotes = LazyLoad(lazy(() => import('@/pages/main/toolkit/notes')));
+const ToolkitTodos = LazyLoad(lazy(() => import('@/pages/main/toolkit/todos')));
+
 const App = LazyLoad(lazy(() => import('@/App')));
 
 const rootLoader: LoaderFunction = (): boolean => {
@@ -47,7 +52,29 @@ export default [
         element: App,
         id: 'root',
         loader: rootLoader,
-        children: []
+        children: [
+            {
+                path: 'system',
+                children: [
+                    { path: 'monitor', element: SystemMonitor },
+                    { path: 'logs', element: SystemLogs }
+                ]
+            },
+            {
+                path: 'toolkit',
+                children: [
+                    { path: 'todos', element: ToolkitTodos },
+                    { path: 'notes', element: ToolkitNotes }
+                ]
+            },
+            {
+                path: 'storage',
+                children: [
+                    { path: 'substorage1', element: <div>substorage1...</div> },
+                    { path: 'substorage2', element: <div>substorage2...</div> }
+                ]
+            }
+        ]
     },
     {
         path: '*',

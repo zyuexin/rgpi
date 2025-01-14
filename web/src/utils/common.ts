@@ -21,7 +21,7 @@ export const generateDefaultPreferMenus = (menus: MenuItemInfo[]) => {
             acc.forEach((pm) => {
                 const curLevel = (cur.level - 0).toString() as MenuLevel;
                 const preLevel = (cur.level - 1).toString() as MenuLevel;
-                if (cur.parentId === pm[preLevel]) {
+                if (!pm[curLevel] && cur.parentId === pm[preLevel]) {
                     pm[curLevel] = cur.id;
                 }
             });

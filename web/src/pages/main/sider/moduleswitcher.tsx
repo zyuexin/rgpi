@@ -1,29 +1,22 @@
-import { useEffect } from 'react';
-import { useMenuStore, useAppStore, useUserStore } from '@/store';
+import { useCallback, useMemo } from 'react';
+import { useMenuStore, useAppStore } from '@/store';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components';
-import { useActiveMenu } from '@/hooks';
 import { cn } from '@/utils/common';
-import CookieUtil from '@/utils/cookie';
 
 export function ModuleSwitcher() {
     const isCollapsed = useAppStore((s) => s.leftResizablePanel.isCollapsed);
 
     const treeMenus = useMenuStore((s) => s.treeMenus);
-    const getTreeMenus = useMenuStore((s) => s.getTreeMenus);
+    const preferMenus = useMenuStore((s) => s.preferMenus);
+    const updatePreferMenus = useMenuStore((s) => s.updatePreferMenus);
+    const activeRootMenu = useMemo(() => preferMenus.find((m) => m.active)?.['0'], [preferMenus]);
 
-    const userInfo = useUserStore((s) => s.userInfo);
-    const getUserInfo = useUserStore((s) => s.getUserInfo);
-
-    useEffect(() => {
-        (async () => {
-            // 1.如果前台store中没有email，则从后台获取用户信息存到前台store中
-            if (!userInfo.email && CookieUtil.get(CookieUtil.USER_NAME)) {
-                await getUserInfo(CookieUtil.get(CookieUtil.USER_NAME)!);
-            }
-            // 2.获取第一级菜单
-            getTreeMenus();
-        })();
-    }, []);
+    const setActiveRootMenu = useCallback(
+        (id: string) => {
+            updatePreferMenus(id, 0);
+        },
+        [preferMenus, updatePreferMenus]
+    );
 
     return (
         <div className='flex h-[64px] items-center justify-center px-4'>
@@ -36,8 +29,8 @@ export function ModuleSwitcher() {
                     aria-label='Select account'
                 >
                     <SelectValue placeholder='Select an account'>
-                        <div className={rootMenus.find((menu) => menu.id === activeRootMenu)?.icon} />
-                        <span className={cn('ml-2', isCollapsed && 'hidden')}>{rootMenus.find((menu) => menu.id === activeRootMenu)?.name}</span>
+                        <div className={treeMenus.find((menu) => menu.id === activeRootMenu)?.icon} />
+                        <span className={cn('ml-2', isCollapsed && 'hidden')}>{treeMenus.find((menu) => menu.id === activeRootMenu)?.name}</span>
                     </SelectValue>
                 </SelectTrigger>
                 <SelectContent>

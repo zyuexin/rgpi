@@ -15,7 +15,7 @@ var Router *gin.Engine
 func Init() {
 	Router = gin.New()
 
-	Router.Use(mw.Logger(zlog.Logger), mw.ErrorHandle(), mw.CorsHandler() /* mw.JwtHandler() */)
+	Router.Use(mw.Logger(zlog.Logger), mw.ErrorHandle(), mw.CorsHandler(), mw.JwtHandler(), mw.StatesCahceHandler())
 
 	InitUserRoutes(Router)
 	InitMenuRoutes(Router)

@@ -43,7 +43,7 @@ func SendCaptchaMail(to string, captcha string) error {
 	m.SetHeader("From", from)
 	m.SetHeader("To", to)
 	m.SetHeader("Subject", subject)
-	m.SetBody("text/html", fmt.Sprintf("验证码： %s", captcha))
+	m.SetBody("text/html", fmt.Sprintf("验证码： %s，（3分钟有效时间）", captcha))
 
 	d := gomail.NewDialer(smtpHost, smtpPort, from, paasword)
 	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}

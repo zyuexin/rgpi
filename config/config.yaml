@@ -40,7 +40,7 @@ captcha:
     expiration: 180
 jwt:
     secret: 'WXlqEk8BJXmAjtp'
-    expiration: 1296000
+    expiration: 2592000000000000
     ignores:
         - '/user/login'
         - '/user/register'

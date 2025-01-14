@@ -4,6 +4,7 @@
 class CookieUtil {
     static TOKEN_NAME = 'Authorization';
     static USER_NAME = 'Email';
+    static PREFER_MENUS = 'PreferMenus';
     /**
      * 设置 cookie
      * @param name cookie 名称
@@ -96,6 +97,18 @@ class CookieUtil {
      */
     static exists(name: string): boolean {
         return CookieUtil.get(name) !== null;
+    }
+
+    static getPreferMenus(): any[] {
+        if (!this.exists(CookieUtil.PREFER_MENUS)) {
+            return [];
+        }
+        try {
+            const pm = JSON.parse(CookieUtil.get(CookieUtil.PREFER_MENUS) || '[]');
+            return pm;
+        } catch (error) {
+            return [];
+        }
     }
 }
 

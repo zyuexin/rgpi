@@ -6,7 +6,7 @@ export { LeftPanelCollapsedSource };
 
 const INITIAL_APP_STATE: AppState = {
     leftResizablePanel: {
-        defaultSize: 12,
+        defaultSize: 14,
         collapsedSize: 4,
         collapsible: true,
         mnSize: 8,

@@ -86,7 +86,9 @@ const useUserStore = create<UserStore>()(
                 s.registerLoading = true;
             });
             await register<AxiosResponse<undefined>>(registerInfo);
-            set((s) => (s.registerLoading = false));
+            set((s) => {
+                s.registerLoading = false;
+            });
         },
         doLogin: async (info: LoginInfo) => {
             set((s) => {
