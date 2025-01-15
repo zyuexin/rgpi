@@ -14,9 +14,11 @@ func InitTodoRoutes(r *gin.Engine) {
 	todosRepositoryImpl := repositories.NewTodosRepository(mysql.DB, redis.RDB)
 	todosService := services.NewTodosService(todosRepositoryImpl)
 	todoController := controllers.NewTodosController(todosService)
-	r.GET("/todos", todoController.GetAllTodos)
-	// r.GET("/todos/:id", todoController.GetTodoById)
-	// r.POST("/todos", todoController.CreateTodo)
-	// r.PUT("/todos/:id", todoController.UpdateTodo)
-	// r.DELETE("/todos/:id", todoController.DeleteTodo)
+	r.Group("/todos")
+	{
+		r.POST("/group", todoController.CreateTodoGroup)
+		r.GET("/group/:id", todoController.GetTodoGroup)
+		r.DELETE("/group/:id", todoController.DeleteTodoGroup)
+		r.PUT("/group/:id", todoController.UpdateTodoGroup)
+	}
 }

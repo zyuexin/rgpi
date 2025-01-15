@@ -53,19 +53,7 @@ export default function Content() {
                     withHandle
                     onDoubleClick={() => void resizablePanelRef.current?.[leftResizablePanel.isCollapsed ? 'expand' : 'collapse']()}
                 />
-                <ResizablePanel defaultSize={100 - leftResizablePanel.defaultSize} minSize={30}>
-                    {/* <SymbolIcon code='hashiqi' className='text-8xl' /> */}
-                    {/* 0.server:
-                    注册时bug，生成验证码在有效期内时再次请求发送验证码时还能发送验证码，正常应该只返回个客户端过期时间读秒，不能再次发送验证码。
-                    1.server： TODO管理
-                    <br />
-                    2.web：TODO页面，用shadcnui的mail模板实现，找一个shadcnui风格的web编辑器，比如tiptap之类的。
-                    <br />
-                    3.server：查询出菜单后按order排下序
-                    <br />
-                    4.server：维护下TODO的菜单sql */}
-                    <Outlet />
-                </ResizablePanel>
+                <Outlet />
             </ResizablePanelGroup>
         </main>
     );

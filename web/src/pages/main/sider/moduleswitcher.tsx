@@ -19,7 +19,7 @@ export function ModuleSwitcher() {
     );
 
     return (
-        <div className='flex h-[64px] items-center justify-center px-4'>
+        <div className='flex h-[52px] items-center justify-center px-4'>
             <Select value={activeRootMenu} defaultValue={activeRootMenu} onValueChange={setActiveRootMenu}>
                 <SelectTrigger
                     className={cn(

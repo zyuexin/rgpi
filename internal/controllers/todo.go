@@ -16,8 +16,15 @@ type TodosController struct {
 	Svr *services.TodosService
 }
 
-func (mc *TodosController) GetAllTodos(c *gin.Context) {
+func (mc *TodosController) CreateTodoGroup(c *gin.Context) {
+
 }
 
-func (mc *TodosController) GetTodoById(c *gin.Context) {
+func (mc *TodosController) GetTodoGroup(c *gin.Context) {
+}
+
+func (mc *TodosController) DeleteTodoGroup(c *gin.Context) {
+}
+
+func (mc *TodosController) UpdateTodoGroup(c *gin.Context) {
 }
