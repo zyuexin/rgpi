@@ -35,7 +35,7 @@ func (ms *MenusService) GetMenusByParentId(parentId string) (menus []models.Menu
 	return
 }
 
-func (ms *MenusService) GetTreeMenus(c *gin.Context) (menus []*models.TreeMenu, err error) {
+func (ms *MenusService) GetTreeMenus(c *gin.Context) (menus []*models.Menu, err error) {
 	allMenus, err := ms.Repo.GetAllMenus()
 	if err != nil {
 		return
@@ -43,42 +43,23 @@ func (ms *MenusService) GetTreeMenus(c *gin.Context) (menus []*models.TreeMenu, 
 	return buildTreeMenu(allMenus)
 }
 
-func buildTreeMenu(menus []models.Menu) ([]*models.TreeMenu, error) {
+func buildTreeMenu(menus []models.Menu) ([]*models.Menu, error) {
 	menuMap := make(map[string]*models.Menu)
+	var treeMenus []*models.Menu
 	for _, menu := range menus {
 		menuMap[menu.ID] = &menu
 	}
 
-	var treeMenus []*models.TreeMenu
-
-	for _, menu := range menuMap {
-		if menu.Level == 0 { // 顶级菜单
-			treeMenu := &models.TreeMenu{Menu: *menu, Children: nil}
-			treeMenus = append(treeMenus, treeMenu)
-			sort.Slice(treeMenus, func(i, j int) bool {
-				return treeMenus[i].SortOrder < treeMenus[j].SortOrder
-			})
-			addChildMenus(menuMap, treeMenu)
+	for _, parentMenu := range menus {
+		if (parentMenu.Level == 0) && (parentMenu.ParentID == "") {
+			treeMenus = append(treeMenus, menuMap[parentMenu.ID])
+		}
+		for _, childMenu := range menus {
+			if parentMenu.ID == childMenu.ParentID {
+				pMenu := menuMap[parentMenu.ID]
+				pMenu.Children = append(pMenu.Children, menuMap[childMenu.ID])
+			}
 		}
 	}
 	return treeMenus, nil
-}
-
-// addChildMenus 递归地为菜单项添加子菜单，并在添加前按SortOrder排序
-func addChildMenus(menuMap map[string]*models.Menu, treeMenu *models.TreeMenu) {
-	var sortedMenus []*models.Menu
-	for _, menu := range menuMap {
-		if menu.ParentID == treeMenu.ID {
-			sortedMenus = append(sortedMenus, menu)
-		}
-	}
-	sort.Slice(sortedMenus, func(i, j int) bool {
-		return sortedMenus[i].SortOrder < sortedMenus[j].SortOrder
-	})
-
-	for _, menu := range sortedMenus {
-		childTreeMenu := &models.TreeMenu{Menu: *menu, Children: nil}
-		treeMenu.Children = append(treeMenu.Children, childTreeMenu)
-		addChildMenus(menuMap, childTreeMenu)
-	}
 }
